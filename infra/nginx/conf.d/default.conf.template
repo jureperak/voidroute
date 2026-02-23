@@ -148,7 +148,50 @@ server {
     location = /tortuga_unavailable.html {
         internal;
         default_type text/html;
-        return 200 "<h1>Tortuga (Jellyfin) is not available at the moment</h1>";
+        return 200 "<h1>Tortuga (Jellyfin) is not available at the moment 📺</h1>";
+    }
+}
+
+server {
+    listen 443 ssl;
+    server_name ${BLACKPEARL_SERVER_PREFIX}.${SERVER_NAME};
+
+    resolver 127.0.0.11 valid=10s ipv6=off;
+
+    ssl_certificate     /etc/nginx/certs/blackpearl.home.arpa.pem;
+    ssl_certificate_key /etc/nginx/certs/blackpearl.home.arpa-key.pem;
+
+    # (optional) LAN only
+    allow 192.168.0.0/24;
+    deny all;
+
+    location / {
+        set $blackpearl_upstream jellyfin;
+        proxy_pass http://$blackpearl_upstream:8096;
+
+        proxy_connect_timeout 2s;
+        proxy_read_timeout 3600s;
+
+        proxy_next_upstream error timeout http_502 http_503 http_504;
+        proxy_next_upstream_tries 1;
+
+        # WebSocket support (Jellyfin uses it)
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    error_page 502 503 504 =200 /blackpearl_unavailable.html;
+
+    location = /blackpearl_unavailable.html {
+        internal;
+        default_type text/html;
+        return 200 "<h1>Blackpearl is not available at the moment 🏴‍☠️</h1>";
     }
 }
 
