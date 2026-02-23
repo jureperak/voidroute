@@ -2,8 +2,8 @@ server {
     listen 443 ssl default_server;
     server_name _;
 
-    ssl_certificate     /etc/nginx/certs/cert.pem;
-    ssl_certificate_key /etc/nginx/certs/key.pem;
+    ssl_certificate     /etc/nginx/certs/pihole.home.arpa.pem;
+    ssl_certificate_key /etc/nginx/certs/pihole.home.arpa-key.pem;
 
     return 301 https://${PIHOLE_CONTAINER}.${SERVER_NAME}$request_uri;
 }
@@ -45,8 +45,8 @@ server {
     listen 443 ssl;
     server_name ${PIHOLE_CONTAINER}.${SERVER_NAME};
 
-    ssl_certificate     /etc/nginx/certs/cert.pem;
-    ssl_certificate_key /etc/nginx/certs/key.pem;
+    ssl_certificate     /etc/nginx/certs/pihole.home.arpa.pem;
+    ssl_certificate_key /etc/nginx/certs/pihole.home.arpa-key.pem;
 
     location / {
         proxy_pass http://${PIHOLE_CONTAINER}:80;
