@@ -14,8 +14,8 @@ server {
 
     resolver 127.0.0.11 valid=10s ipv6=off;
 
-    # ssl_certificate     /etc/nginx/certs/cert.pem;
-    # ssl_certificate_key /etc/nginx/certs/key.pem;
+    ssl_certificate     /etc/nginx/certs/scrapper.home.arpa.pem;
+    ssl_certificate_key /etc/nginx/certs/scrapper.home.arpa-key.pem;
 
     location / {
         set $scrapper_upstream scrapper;
@@ -63,8 +63,8 @@ server {
 
     resolver 127.0.0.11 valid=10s ipv6=off;
 
-    # ssl_certificate     /etc/nginx/certs/cert.pem;
-    # ssl_certificate_key /etc/nginx/certs/key.pem;
+    # ssl_certificate     /etc/nginx/certs/snacking.home.arpa.pem;
+    # ssl_certificate_key /etc/nginx/certs/snacking.home.arpa-key.pem;
 
     location / {
         set $snacking_upstream snacking;
@@ -100,8 +100,8 @@ server {
     listen 443 ssl;
     server_name ${NULLROUTE_SERVER_PREFIX}.${SERVER_NAME};
 
-    # ssl_certificate     /etc/nginx/certs/cert.pem;
-    # ssl_certificate_key /etc/nginx/certs/key.pem;
+    ssl_certificate     /etc/nginx/certs/dashboard.home.arpa.pem;
+    ssl_certificate_key /etc/nginx/certs/dashboard.home.arpa-key.pem;
 
     location / {
         default_type text/html;
@@ -115,8 +115,8 @@ server {
 
     resolver 127.0.0.11 valid=10s ipv6=off;
 
-    # ssl_certificate     /etc/nginx/certs/cert.pem;
-    # ssl_certificate_key /etc/nginx/certs/key.pem;
+    ssl_certificate     /etc/nginx/certs/tortuga.home.arpa.pem;
+    ssl_certificate_key /etc/nginx/certs/tortuga.home.arpa-key.pem;
 
     # (optional) LAN only
     allow 192.168.1.0/24;
