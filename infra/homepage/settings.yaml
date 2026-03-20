@@ -1,0 +1,10 @@
+title: voidroute
+theme: dark
+color: slate
+headerStyle: clean
+
+background:
+  image: /images/bg.jpg
+  opacity: 20
+
+cardBlur: xs
