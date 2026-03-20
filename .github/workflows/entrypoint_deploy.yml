@@ -57,3 +57,25 @@ jobs:
         run: |
           docker ps --filter "name=${{ vars.CADDY_CONTAINER }}"
           docker logs "${{ vars.CADDY_CONTAINER }}" --tail 20
+
+      - name: Generate Homepage config
+        env:
+          SERVER_NAME: ${{ vars.SERVER_NAME }}
+          TORTUGA_SERVER_PREFIX: ${{ vars.TORTUGA_SERVER_PREFIX }}
+          JELLYFIN_API_KEY: ${{ secrets.TORTUGA_API_KEY }}
+        run: |
+          mkdir -p "${{ vars.SERVER_BASE_PATH }}/homepage/config"
+      
+          envsubst '${SERVER_NAME} ${TORTUGA_SERVER_PREFIX} ${JELLYFIN_API_KEY}' \
+            < infra/homepage/config/services.yaml.template \
+            > "${{ vars.SERVER_BASE_PATH }}/homepage/config/services.yaml"
+
+      - name: Copy docker-compose
+        run: |
+          mkdir -p "${{ vars.SERVER_BASE_PATH }}/homepage"
+          cp infra/homepage/docker-compose.yml "${{ vars.SERVER_BASE_PATH }}/homepage/"
+
+      - name: Start Homepage
+        run: |
+          cd "${{ vars.SERVER_BASE_PATH }}/homepage"
+          docker compose up -d
