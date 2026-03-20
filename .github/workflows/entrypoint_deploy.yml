@@ -62,20 +62,35 @@ jobs:
         env:
           SERVER_NAME: ${{ vars.SERVER_NAME }}
           TORTUGA_SERVER_PREFIX: ${{ vars.TORTUGA_SERVER_PREFIX }}
+          BLACKPEARL_SERVER_PREFIX: ${{ vars.BLACKPEARL_SERVER_PREFIX }}
+          ADGUARD_SERVER_PREFIX: ${{ vars.ADGUARD_SERVER_PREFIX }}
           JELLYFIN_API_KEY: ${{ secrets.TORTUGA_API_KEY }}
         run: |
           mkdir -p "${{ vars.SERVER_BASE_PATH }}/homepage/config"
       
-          envsubst '${SERVER_NAME} ${TORTUGA_SERVER_PREFIX} ${JELLYFIN_API_KEY}' \
+          # static files
+          cp infra/homepage/config/settings.yaml "${{ vars.SERVER_BASE_PATH }}/homepage/config/" || true
+          cp infra/homepage/config/widgets.yaml "${{ vars.SERVER_BASE_PATH }}/homepage/config/" || true
+          cp infra/homepage/config/docker.yaml "${{ vars.SERVER_BASE_PATH }}/homepage/config/" || true
+
+          # templates → generate
+          envsubst '${SERVER_NAME} ${TORTUGA_SERVER_PREFIX} ${BLACKPEARL_API_KEY}' \
             < infra/homepage/config/services.yaml.template \
             > "${{ vars.SERVER_BASE_PATH }}/homepage/config/services.yaml"
-
+      
+          envsubst '${SERVER_NAME} ${ADGUARD_SERVER_PREFIX} ${TORTUGA_SERVER_PREFIX} ${BLACKPEARL_SERVER_PREFIX}' \
+            < infra/homepage/config/bookmarks.yaml.template \
+            > "${{ vars.SERVER_BASE_PATH }}/homepage/config/bookmarks.yaml"
+         
       - name: Copy docker-compose
         run: |
           mkdir -p "${{ vars.SERVER_BASE_PATH }}/homepage"
           cp infra/homepage/docker-compose.yml "${{ vars.SERVER_BASE_PATH }}/homepage/"
 
       - name: Start Homepage
+        env:
+          SERVER_NAME: ${{ vars.SERVER_NAME }}
+          HOMEPAGE_SERVER_PREFIX: ${{ vars.HOMEPAGE_SERVER_PREFIX }}
         run: |
           cd "${{ vars.SERVER_BASE_PATH }}/homepage"
           docker compose up -d
