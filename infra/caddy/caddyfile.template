@@ -1,5 +1,5 @@
-{$NULLROUTE_SERVER_PREFIX}.{$SERVER_NAME} {
-	respond "<h1>nullroute dashboard (soon)</h1>" 200 {
+{$DASBOARD_SERVER_PREFIX}.{$SERVER_NAME} {
+	respond "<h1>voidroute dashboard (soon)</h1>" 200 {
 		content_type text/html
 	}
 }
