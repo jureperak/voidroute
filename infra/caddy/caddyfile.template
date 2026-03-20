@@ -1,51 +1,28 @@
 {$DASBOARD_SERVER_PREFIX}.{$SERVER_NAME} {
-	respond "<h1>voidroute dashboard (soon)</h1>" 200 {
-		content_type text/html
-	}
+	header Content-Type text/html
+	respond "<h1>voidroute dashboard (soon)</h1>" 200
 }
 
 {$TORTUGA_SERVER_PREFIX}.{$SERVER_NAME} {
-	reverse_proxy tortuga:8096 {
-		header_up Host {host}
-		header_up X-Real-IP {remote_host}
-		header_up X-Forwarded-For {remote_host}
-		header_up X-Forwarded-Proto {scheme}
-
-		transport http {
-			dial_timeout 2s
-			response_header_timeout 3600s
-		}
-	}
+	reverse_proxy tortuga:8096
 
 	handle_errors {
 		@upstream_fail expression `{http.error.status_code} == 502 || {http.error.status_code} == 503 || {http.error.status_code} == 504`
 		handle @upstream_fail {
-			respond "<h1>Tortuga (Jellyfin) is not available at the moment</h1>" 200 {
-				content_type text/html
-			}
+			header Content-Type text/html
+			respond "<h1>Tortuga (Jellyfin) is not available at the moment</h1>" 200
 		}
 	}
 }
 
 {$BLACKPEARL_SERVER_PREFIX}.{$SERVER_NAME} {
-	reverse_proxy blackpearl:8080 {
-		header_up Host {host}
-		header_up X-Real-IP {remote_host}
-		header_up X-Forwarded-For {remote_host}
-		header_up X-Forwarded-Proto {scheme}
-
-		transport http {
-			dial_timeout 2s
-			response_header_timeout 3600s
-		}
-	}
+	reverse_proxy blackpearl:8080
 
 	handle_errors {
 		@upstream_fail expression `{http.error.status_code} == 502 || {http.error.status_code} == 503 || {http.error.status_code} == 504`
 		handle @upstream_fail {
-			respond "<h1>Blackpearl is not available at the moment</h1>" 200 {
-				content_type text/html
-			}
+			header Content-Type text/html
+			respond "<h1>Blackpearl is not available at the moment</h1>" 200
 		}
 	}
 }
