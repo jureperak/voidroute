@@ -91,6 +91,7 @@ jobs:
         env:
           SERVER_NAME: ${{ vars.SERVER_NAME }}
           HOMEPAGE_SERVER_PREFIX: ${{ vars.HOMEPAGE_SERVER_PREFIX }}
+          DOCKER_NETWORK: ${{ vars.DOCKER_NETWORK }}
         run: |
           cd "${{ vars.SERVER_BASE_PATH }}/homepage"
           docker compose up -d
