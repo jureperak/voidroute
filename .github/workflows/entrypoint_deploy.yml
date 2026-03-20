@@ -62,11 +62,11 @@ jobs:
         env:
           SERVER_NAME: ${{ vars.SERVER_NAME }}
           TORTUGA_SERVER_PREFIX: ${{ vars.TORTUGA_SERVER_PREFIX }}
-          TORTUGA_API_KEY: ${{ vars.TORTUGA_API_KEY }}
+          TORTUGA_API_KEY: ${{ secrets.TORTUGA_API_KEY }}
           BLACKPEARL_SERVER_PREFIX: ${{ vars.BLACKPEARL_SERVER_PREFIX }}
-          BLACKPEARL_USERNAME: ${{ vars.BLACKPEARL_USERNAME }}
+          BLACKPEARL_USERNAME: ${{ secrets.BLACKPEARL_USERNAME }}
+          BLACKPEARL_PASSWORD: ${{ secrets.BLACKPEARL_PASSWORD }}
           ADGUARD_SERVER_PREFIX: ${{ vars.ADGUARD_SERVER_PREFIX }}
-          JELLYFIN_API_KEY: ${{ secrets.TORTUGA_API_KEY }}
         run: |
           mkdir -p "${{ vars.SERVER_BASE_PATH }}/homepage/config"
       
