@@ -74,7 +74,7 @@ jobs:
           cp infra/homepage/config/docker.yaml "${{ vars.SERVER_BASE_PATH }}/homepage/config/" || true
 
           # templates → generate
-          envsubst '${SERVER_NAME} ${TORTUGA_SERVER_PREFIX} ${BLACKPEARL_API_KEY}' \
+          envsubst '${SERVER_NAME} ${TORTUGA_SERVER_PREFIX} ${TORTUGA_API_KEY} ${BLACKPEARL_SERVER_PREFIX} ${BLACKPEARL_USERNAME} ${BLACKPEARL_PASSWORD}' \
             < infra/homepage/config/services.yaml.template \
             > "${{ vars.SERVER_BASE_PATH }}/homepage/config/services.yaml"
       
