@@ -9,6 +9,10 @@ ${DASHBOARD_SERVER_PREFIX}.${SERVER_NAME} {
 	}
 }
 
+${ADGUARD_SERVER_PREFIX}.${SERVER_NAME} {
+	reverse_proxy 192.168.8.1:3000
+}
+
 ${TORTUGA_SERVER_PREFIX}.${SERVER_NAME} {
 	reverse_proxy tortuga:8096
 
