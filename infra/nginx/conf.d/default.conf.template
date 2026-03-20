@@ -14,10 +14,6 @@ server {
 
     resolver 127.0.0.11 valid=10s ipv6=off;
 
-    # (optional) LAN only
-    allow 192.168.8.0/24;
-    deny all;
-
     location / {
         set $tortuga_upstream tortuga;
         proxy_pass http://$tortuga_upstream:8096;
@@ -44,7 +40,7 @@ server {
     location = /tortuga_unavailable.html {
         internal;
         default_type text/html;
-        return 200 "<h1>Tortuga (Jellyfin) is not available at the moment 📺</h1>";
+        return 200 "<h1>Tortuga (Jellyfin) is not available at the moment</h1>";
     }
 }
 
@@ -53,10 +49,6 @@ server {
     server_name ${BLACKPEARL_SERVER_PREFIX}.${SERVER_NAME};
 
     resolver 127.0.0.11 valid=10s ipv6=off;
-
-    # (optional) LAN only
-    allow 192.168.8.0/24;
-    deny all;
 
     location / {
         set $blackpearl_upstream blackpearl;
@@ -84,6 +76,6 @@ server {
     location = /blackpearl_unavailable.html {
         internal;
         default_type text/html;
-        return 200 "<h1>Blackpearl is not available at the moment 🏴‍☠️</h1>";
+        return 200 "<h1>Blackpearl is not available at the moment</h1>";
     }
 }
