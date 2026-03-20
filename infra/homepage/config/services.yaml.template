@@ -1,5 +1,5 @@
 - Media:
-    - Jellyfin:
+    - Tortuga:
         icon: jellyfin.png
         href: https://${TORTUGA_SERVER_PREFIX}.${SERVER_NAME}
         description: Movies and TV
@@ -8,7 +8,7 @@
           url: http://tortuga:8096
           key: ${TORTUGA_API_KEY}
 
-    - qBittorrent:
+    - Blackpearl:
         icon: qbittorrent.png
         href: https://${BLACKPEARL_SERVER_PREFIX}.${SERVER_NAME}
         description: Downloads
