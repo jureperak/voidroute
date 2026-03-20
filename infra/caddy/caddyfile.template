@@ -1,9 +1,9 @@
-{$DASHBOARD_SERVER_PREFIX}.{$SERVER_NAME} {
+${DASHBOARD_SERVER_PREFIX}.${SERVER_NAME} {
 	header Content-Type text/html
 	respond "<h1>voidroute dashboard (soon)</h1>" 200
 }
 
-{$TORTUGA_SERVER_PREFIX}.{$SERVER_NAME} {
+${TORTUGA_SERVER_PREFIX}.${SERVER_NAME} {
 	reverse_proxy tortuga:8096
 
 	handle_errors {
@@ -15,7 +15,7 @@
 	}
 }
 
-{$BLACKPEARL_SERVER_PREFIX}.{$SERVER_NAME} {
+${BLACKPEARL_SERVER_PREFIX}.${SERVER_NAME} {
 	reverse_proxy blackpearl:8080
 
 	handle_errors {
