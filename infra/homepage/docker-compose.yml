@@ -11,3 +11,8 @@ services:
       - ./images:/app/public/images
     environment:
       HOMEPAGE_ALLOWED_HOSTS: ${HOMEPAGE_SERVER_PREFIX}.${SERVER_NAME}
+
+networks:
+  entrypoint:
+    external: true
+    name: ${DOCKER_NETWORK}
