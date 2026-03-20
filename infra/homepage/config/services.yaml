@@ -6,7 +6,7 @@
         widget:
           type: jellyfin
           url: http://tortuga:8096
-          key: ${JELLYFIN_API_KEY}
+          key: ${TORTUGA_API_KEY}
 
     - qBittorrent:
         icon: qbittorrent.png
