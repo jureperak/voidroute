@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - infra/nginx/**
+      - infra/caddy/**
 
 jobs:
   deploy:
@@ -20,38 +20,39 @@ jobs:
           docker network inspect "${{ vars.DOCKER_NETWORK }}" >/dev/null 2>&1 || \
           docker network create "${{ vars.DOCKER_NETWORK }}"
 
-      - name: Install nginx config (envsubst)
+      - name: Install Caddyfile (envsubst)
         env:
-          SERVER_NAME:  ${{ vars.SERVER_NAME }}
-          NULLROUTE_SERVER_PREFIX:  ${{ vars.NULLROUTE_SERVER_PREFIX }}
-          TORTUGA_SERVER_PREFIX:  ${{ vars.TORTUGA_SERVER_PREFIX }}
-          BLACKPEARL_SERVER_PREFIX:  ${{ vars.BLACKPEARL_SERVER_PREFIX }}
+          SERVER_NAME: ${{ vars.SERVER_NAME }}
+          NULLROUTE_SERVER_PREFIX: ${{ vars.NULLROUTE_SERVER_PREFIX }}
+          TORTUGA_SERVER_PREFIX: ${{ vars.TORTUGA_SERVER_PREFIX }}
+          BLACKPEARL_SERVER_PREFIX: ${{ vars.BLACKPEARL_SERVER_PREFIX }}
         run: |
-          mkdir -p "${{ vars.SERVER_BASE_PATH }}/nginx/conf.d"
-      
+          mkdir -p "${{ vars.SERVER_BASE_PATH }}/caddy"
+
           envsubst '${SERVER_NAME} ${NULLROUTE_SERVER_PREFIX} ${TORTUGA_SERVER_PREFIX} ${BLACKPEARL_SERVER_PREFIX}' \
-            < infra/nginx/conf.d/default.conf.template \
-            > "${{ vars.SERVER_BASE_PATH }}/nginx/conf.d/default.conf"
+            < infra/caddy/caddyfile.template \
+            > "${{ vars.SERVER_BASE_PATH }}/caddy/Caddyfile"
 
       - name: Stop and remove old container
         run: |
-          docker stop "${{ vars.NGINX_CONTAINER }}" || true
-          docker rm "${{ vars.NGINX_CONTAINER }}" || true
+          docker stop "${{ vars.CADDY_CONTAINER }}" || true
+          docker rm "${{ vars.CADDY_CONTAINER }}" || true
 
-      - name: Recreate nginx container
+      - name: Recreate caddy container
         run: |
-          docker rm -f "${{ vars.NGINX_CONTAINER }}" 2>/dev/null || true
+          docker rm -f "${{ vars.CADDY_CONTAINER }}" 2>/dev/null || true
 
           docker run -d \
-            --name "${{ vars.NGINX_CONTAINER }}" \
+            --name "${{ vars.CADDY_CONTAINER }}" \
             --network "${{ vars.DOCKER_NETWORK }}" \
             -p 80:80 -p 443:443 \
-            -v "${{ vars.SERVER_BASE_PATH }}/nginx/conf.d:/etc/nginx/conf.d:ro" \
-            -v "${{ vars.SERVER_BASE_PATH }}/nginx/certs:/etc/nginx/certs:ro" \
+            -v "${{ vars.SERVER_BASE_PATH }}/caddy/Caddyfile:/etc/caddy/Caddyfile:ro" \
+            -v "${{ vars.SERVER_BASE_PATH }}/caddy/data:/data" \
+            -v "${{ vars.SERVER_BASE_PATH }}/caddy/config:/config" \
             --restart unless-stopped \
-            nginx:alpine
+            caddy:2
 
       - name: Status
         run: |
-          docker ps --filter "name=${{ vars.NGINX_CONTAINER }}"
-          docker logs "${{ vars.NGINX_CONTAINER }}" --tail 20
+          docker ps --filter "name=${{ vars.CADDY_CONTAINER }}"
+          docker logs "${{ vars.CADDY_CONTAINER }}" --tail 20
