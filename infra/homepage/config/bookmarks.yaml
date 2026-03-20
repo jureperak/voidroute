@@ -6,4 +6,4 @@
     - Jellyfin:
         - href: https://${TORTUGA_SERVER_PREFIX}.${SERVER_NAME}
     - qBittorrent:
-        - href: http://${blackpearl_SERVER_PREFIX}.${SERVER_NAME}
+        - href: http://${BLACKPEARL_SERVER_PREFIX}.${SERVER_NAME}
