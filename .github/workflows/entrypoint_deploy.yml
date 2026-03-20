@@ -30,7 +30,7 @@ jobs:
         run: |
           mkdir -p "${{ vars.SERVER_BASE_PATH }}/caddy"
 
-          envsubst '${SERVER_NAME} ${DASHBOARD_SERVER_PREFIX} ${TORTUGA_SERVER_PREFIX} ${BLACKPEARL_SERVER_PREFIX}' \
+          envsubst '${SERVER_NAME} ${HOMEPAGE_SERVER_PREFIX} ${ADGUARD_SERVER_PREFIX} ${TORTUGA_SERVER_PREFIX} ${BLACKPEARL_SERVER_PREFIX}' \
             < infra/caddy/caddyfile.template \
             > "${{ vars.SERVER_BASE_PATH }}/caddy/Caddyfile"
 
