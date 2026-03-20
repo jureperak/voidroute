@@ -26,13 +26,10 @@ jobs:
           NULLROUTE_SERVER_PREFIX:  ${{ vars.NULLROUTE_SERVER_PREFIX }}
           TORTUGA_SERVER_PREFIX:  ${{ vars.TORTUGA_SERVER_PREFIX }}
           BLACKPEARL_SERVER_PREFIX:  ${{ vars.BLACKPEARL_SERVER_PREFIX }}
-          PIHOLE_CONTAINER:  ${{ vars.PIHOLE_CONTAINER }}
-          SCRAPPER_CONTAINER:   ${{ vars.SCRAPPER_CONTAINER }}
-          SNACKING_CONTAINER:   ${{ vars.SNACKING_CONTAINER }}
         run: |
           mkdir -p "${{ vars.SERVER_BASE_PATH }}/nginx/conf.d"
       
-          envsubst '${SERVER_NAME} ${NULLROUTE_SERVER_PREFIX} ${TORTUGA_SERVER_PREFIX} ${BLACKPEARL_SERVER_PREFIX} ${PIHOLE_CONTAINER} ${SCRAPPER_CONTAINER} ${SNACKING_CONTAINER}' \
+          envsubst '${SERVER_NAME} ${NULLROUTE_SERVER_PREFIX} ${TORTUGA_SERVER_PREFIX} ${BLACKPEARL_SERVER_PREFIX}' \
             < infra/nginx/conf.d/default.conf.template \
             > "${{ vars.SERVER_BASE_PATH }}/nginx/conf.d/default.conf"
 
