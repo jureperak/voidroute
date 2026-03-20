@@ -1,0 +1,9 @@
+- Admin:
+    - AdGuard:
+        - href: https://adguard.voidroute.dev
+    - Router:
+        - href: http://192.168.8.1
+    - Jellyfin:
+        - href: https://tortuga.voidroute.dev
+    - qBittorrent:
+        - href: http://blackpearl.voidroute.dev
