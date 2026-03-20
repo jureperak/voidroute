@@ -1,9 +1,6 @@
 server {
-    listen 443 ssl;
+    listen 80;
     server_name ${NULLROUTE_SERVER_PREFIX}.${SERVER_NAME};
-
-    ssl_certificate     /etc/nginx/certs/dashboard.home.arpa.pem;
-    ssl_certificate_key /etc/nginx/certs/dashboard.home.arpa-key.pem;
 
     location / {
         default_type text/html;
@@ -12,16 +9,13 @@ server {
 }
 
 server {
-    listen 443 ssl;
+    listen 80;
     server_name ${TORTUGA_SERVER_PREFIX}.${SERVER_NAME};
 
     resolver 127.0.0.11 valid=10s ipv6=off;
 
-    ssl_certificate     /etc/nginx/certs/tortuga.home.arpa.pem;
-    ssl_certificate_key /etc/nginx/certs/tortuga.home.arpa-key.pem;
-
     # (optional) LAN only
-    allow 192.168.0.0/24;
+    allow 192.168.8.0/24;
     deny all;
 
     location / {
@@ -55,16 +49,13 @@ server {
 }
 
 server {
-    listen 443 ssl;
+    listen 80;
     server_name ${BLACKPEARL_SERVER_PREFIX}.${SERVER_NAME};
 
     resolver 127.0.0.11 valid=10s ipv6=off;
 
-    ssl_certificate     /etc/nginx/certs/blackpearl.home.arpa.pem;
-    ssl_certificate_key /etc/nginx/certs/blackpearl.home.arpa-key.pem;
-
     # (optional) LAN only
-    allow 192.168.0.0/24;
+    allow 192.168.8.0/24;
     deny all;
 
     location / {
@@ -95,22 +86,4 @@ server {
         default_type text/html;
         return 200 "<h1>Blackpearl is not available at the moment 🏴‍☠️</h1>";
     }
-}
-
-server {
-    listen 80;
-    server_name ${NULLROUTE_SERVER_PREFIX}.${SERVER_NAME};
-    return 301 https://$host$request_uri;
-}
-
-server {
-    listen 80;
-    server_name ${TORTUGA_SERVER_PREFIX}.${SERVER_NAME};
-    return 301 https://$host$request_uri;
-}
-
-server {
-    listen 80;
-    server_name ${BLACKPEARL_SERVER_PREFIX}.${SERVER_NAME};
-    return 301 https://$host$request_uri;
 }
