@@ -23,13 +23,13 @@ jobs:
       - name: Install Caddyfile (envsubst)
         env:
           SERVER_NAME: ${{ vars.SERVER_NAME }}
-          NULLROUTE_SERVER_PREFIX: ${{ vars.NULLROUTE_SERVER_PREFIX }}
+          DASHBOARD_SERVER_PREFIX: ${{ vars.DASHBOARD_SERVER_PREFIX }}
           TORTUGA_SERVER_PREFIX: ${{ vars.TORTUGA_SERVER_PREFIX }}
           BLACKPEARL_SERVER_PREFIX: ${{ vars.BLACKPEARL_SERVER_PREFIX }}
         run: |
           mkdir -p "${{ vars.SERVER_BASE_PATH }}/caddy"
 
-          envsubst '${SERVER_NAME} ${NULLROUTE_SERVER_PREFIX} ${TORTUGA_SERVER_PREFIX} ${BLACKPEARL_SERVER_PREFIX}' \
+          envsubst '${SERVER_NAME} ${DASHBOARD_SERVER_PREFIX} ${TORTUGA_SERVER_PREFIX} ${BLACKPEARL_SERVER_PREFIX}' \
             < infra/caddy/caddyfile.template \
             > "${{ vars.SERVER_BASE_PATH }}/caddy/Caddyfile"
 
