@@ -1,0 +1,19 @@
+- Media:
+    - Jellyfin:
+        icon: jellyfin.png
+        href: https://${TORTUGA_SERVER_PREFIX}.${SERVER_NAME}
+        description: Movies and TV
+        widget:
+          type: jellyfin
+          url: http://tortuga:8096
+          key: ${JELLYFIN_API_KEY}
+
+    - qBittorrent:
+        icon: qbittorrent.png
+        href: https://${BLACKPEARL_SERVER_PREFIX}.${SERVER_NAME}
+        description: Downloads
+        widget:
+          type: qbittorrent
+          url: http://blackpearl:8080
+          username: ${BLACKPEARL_USERNAME}
+          password: ${BLACKPEARL_PASSWORD}
