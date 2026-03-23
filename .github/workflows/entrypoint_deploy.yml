@@ -28,10 +28,11 @@ jobs:
           TORTUGA_SERVER_PREFIX: ${{ vars.TORTUGA_SERVER_PREFIX }}
           BLACKPEARL_SERVER_PREFIX: ${{ vars.BLACKPEARL_SERVER_PREFIX }}
           VOIDROUTE_VPN_SUBNET: ${{ vars.VOIDROUTE_VPN_SUBNET }}
+          SONARR_SERVER_PREFIX: ${{ vars.SONARR_SERVER_PREFIX }}
         run: |
           mkdir -p "${{ vars.SERVER_BASE_PATH }}/caddy"
 
-          envsubst '${SERVER_NAME} ${HOMEPAGE_SERVER_PREFIX} ${ADGUARD_SERVER_PREFIX} ${TORTUGA_SERVER_PREFIX} ${BLACKPEARL_SERVER_PREFIX} ${VOIDROUTE_VPN_SUBNET}' \
+          envsubst '${SERVER_NAME} ${HOMEPAGE_SERVER_PREFIX} ${ADGUARD_SERVER_PREFIX} ${TORTUGA_SERVER_PREFIX} ${BLACKPEARL_SERVER_PREFIX} ${VOIDROUTE_VPN_SUBNET} ${SONARR_SERVER_PREFIX}' \
             < infra/caddy/caddyfile.template \
             > "${{ vars.SERVER_BASE_PATH }}/caddy/Caddyfile"
 
@@ -68,6 +69,7 @@ jobs:
           BLACKPEARL_USERNAME: ${{ secrets.BLACKPEARL_USERNAME }}
           BLACKPEARL_PASSWORD: ${{ secrets.BLACKPEARL_PASSWORD }}
           ADGUARD_SERVER_PREFIX: ${{ vars.ADGUARD_SERVER_PREFIX }}
+          SONARR_SERVER_PREFIX: ${{ vars.SONARR_SERVER_PREFIX }}
         run: |
           mkdir -p "${{ vars.SERVER_BASE_PATH }}/homepage/config"
       
@@ -77,13 +79,17 @@ jobs:
           cp infra/homepage/config/docker.yaml "${{ vars.SERVER_BASE_PATH }}/homepage/config/" || true
 
           # templates → generate
-          envsubst '${SERVER_NAME} ${TORTUGA_SERVER_PREFIX} ${TORTUGA_API_KEY} ${BLACKPEARL_SERVER_PREFIX} ${BLACKPEARL_USERNAME} ${BLACKPEARL_PASSWORD}' \
+          envsubst '${SERVER_NAME} ${TORTUGA_SERVER_PREFIX} ${TORTUGA_API_KEY} ${BLACKPEARL_SERVER_PREFIX} ${BLACKPEARL_USERNAME} ${BLACKPEARL_PASSWORD} ${SONARR_SERVER_PREFIX}' \
             < infra/homepage/config/services.yaml.template \
             > "${{ vars.SERVER_BASE_PATH }}/homepage/config/services.yaml"
       
           envsubst '${SERVER_NAME} ${ADGUARD_SERVER_PREFIX} ${TORTUGA_SERVER_PREFIX} ${BLACKPEARL_SERVER_PREFIX}' \
             < infra/homepage/config/bookmarks.yaml.template \
             > "${{ vars.SERVER_BASE_PATH }}/homepage/config/bookmarks.yaml"
+
+          envsubst '${SONARR_SERVER_PREFIX}' \
+            < infra/homepage/config/widgets.yaml.template \
+            > "${{ vars.SERVER_BASE_PATH }}/homepage/config/widgets.yaml"
          
       - name: Copy docker-compose
         run: |
