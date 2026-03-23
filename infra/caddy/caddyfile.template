@@ -58,3 +58,19 @@ ${BLACKPEARL_SERVER_PREFIX}.${SERVER_NAME} {
 
 	respond "Forbidden" 403
 }
+
+${SONARR_SERVER_PREFIX}.${SERVER_NAME} {
+	@allowed remote_ip 192.168.8.0/24 ${VOIDROUTE_VPN_SUBNET}
+	handle @allowed {
+		reverse_proxy sonarr:8989
+	}
+
+	handle_errors {
+		@upstream_fail expression `{http.error.status_code} in [502,503,504]`
+		handle @upstream_fail {
+			respond "<h1>Sonarr is not available at the moment</h1>" 200
+		}
+	}
+
+	respond "Forbidden" 403
+}
