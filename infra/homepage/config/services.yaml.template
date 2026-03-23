@@ -1,3 +1,11 @@
+- Infra:
+    - Caddy:
+        icon: caddy.png
+        description: Reverse proxy
+        widget:
+          type: caddy
+          url: http://caddy:2019
+
 - Media:
     - Tortuga:
         icon: jellyfin.png
