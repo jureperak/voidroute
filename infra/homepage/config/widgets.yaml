@@ -10,3 +10,16 @@
     refresh: 3000 # optional, in ms
     diskUnits: bytes # optional, bytes (default) or bbytes. Only applies to disk
     network: true # optional, uses 'default' if true or specify a network interface name
+
+- datetime:
+    text_size: xl
+    format:
+      timeStyle: short
+      dateStyle: short
+
+- openmeteo:
+    label: Osijek
+    latitude: 45.5544
+    longitude: 18.6624
+    timezone: Europe/Zagreb
+    units: metric
