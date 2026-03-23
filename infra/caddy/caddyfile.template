@@ -1,3 +1,7 @@
+{
+	admin 0.0.0.0:2019
+}
+
 ${HOMEPAGE_SERVER_PREFIX}.${SERVER_NAME} {
 	@allowed remote_ip 192.168.8.0/24 ${VOIDROUTE_VPN_SUBNET}
 	handle @allowed {
