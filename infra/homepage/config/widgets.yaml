@@ -12,10 +12,11 @@
     network: true # optional, uses 'default' if true or specify a network interface name
 
 - datetime:
+    locale: hr
     text_size: xl
     format:
-      timeStyle: short
-      dateStyle: short
+      dateStyle: long
+      timeStyle: long
 
 - openmeteo:
     label: Osijek
