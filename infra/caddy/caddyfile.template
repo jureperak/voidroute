@@ -10,10 +10,12 @@ ${HOMEPAGE_SERVER_PREFIX}.${SERVER_NAME} {
 }
 
 ${ADGUARD_SERVER_PREFIX}.${SERVER_NAME} {
-	@not_lan not remote_ip 192.168.8.0/24
-	respond @not_lan "Forbidden" 403
+	@allowed remote_ip 192.168.8.0/24 10.0.0.0/24
+	handle @allowed {
+		reverse_proxy 192.168.8.1:3000
+	}
 
-	reverse_proxy 192.168.8.1:3000
+	respond "Forbidden" 403
 }
 
 ${TORTUGA_SERVER_PREFIX}.${SERVER_NAME} {
@@ -28,10 +30,10 @@ ${TORTUGA_SERVER_PREFIX}.${SERVER_NAME} {
 }
 
 ${BLACKPEARL_SERVER_PREFIX}.${SERVER_NAME} {
-	@not_lan not remote_ip 192.168.8.0/24
-	respond @not_lan "Forbidden" 403
-
-	reverse_proxy blackpearl:8080
+	@allowed remote_ip 192.168.8.0/24 10.0.0.0/24
+	handle @allowed {
+		reverse_proxy blackpearl:8080
+	}
 
 	handle_errors {
 		@upstream_fail expression `{http.error.status_code} in [502,503,504]`
@@ -39,4 +41,6 @@ ${BLACKPEARL_SERVER_PREFIX}.${SERVER_NAME} {
 			respond "<h1>Blackpearl is not available at the moment</h1>" 200
 		}
 	}
+
+	respond "Forbidden" 403
 }
