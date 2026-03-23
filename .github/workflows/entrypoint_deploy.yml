@@ -87,9 +87,9 @@ jobs:
             < infra/homepage/config/bookmarks.yaml.template \
             > "${{ vars.SERVER_BASE_PATH }}/homepage/config/bookmarks.yaml"
 
-          envsubst '${SONARR_SERVER_PREFIX}' \
+          envsubst '${SERVER_NAME} ${SONARR_SERVER_PREFIX}' \
             < infra/homepage/config/widgets.yaml.template \
-            > "${{ vars.SERVER_BASE_PATH }}/homepage/config/widgets.yaml"
+            > "${{ vars.SERVER_BASE_PATH }}/homepage/config/widgets.yaml"“
          
       - name: Copy docker-compose
         run: |
