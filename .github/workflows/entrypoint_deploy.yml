@@ -27,10 +27,11 @@ jobs:
           ADGUARD_SERVER_PREFIX: ${{ vars.ADGUARD_SERVER_PREFIX }}
           TORTUGA_SERVER_PREFIX: ${{ vars.TORTUGA_SERVER_PREFIX }}
           BLACKPEARL_SERVER_PREFIX: ${{ vars.BLACKPEARL_SERVER_PREFIX }}
+          VOIDROUTE_VPN_SUBNET: ${{ vars.VOIDROUTE_VPN_SUBNET }}
         run: |
           mkdir -p "${{ vars.SERVER_BASE_PATH }}/caddy"
 
-          envsubst '${SERVER_NAME} ${HOMEPAGE_SERVER_PREFIX} ${ADGUARD_SERVER_PREFIX} ${TORTUGA_SERVER_PREFIX} ${BLACKPEARL_SERVER_PREFIX}' \
+          envsubst '${SERVER_NAME} ${HOMEPAGE_SERVER_PREFIX} ${ADGUARD_SERVER_PREFIX} ${TORTUGA_SERVER_PREFIX} ${BLACKPEARL_SERVER_PREFIX} ${VOIDROUTE_VPN_SUBNET}' \
             < infra/caddy/caddyfile.template \
             > "${{ vars.SERVER_BASE_PATH }}/caddy/Caddyfile"
 
