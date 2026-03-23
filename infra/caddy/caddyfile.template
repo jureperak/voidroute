@@ -1,5 +1,8 @@
 ${HOMEPAGE_SERVER_PREFIX}.${SERVER_NAME} {
-	reverse_proxy homepage:3000
+	@allowed remote_ip 192.168.8.0/24 ${VOIDROUTE_VPN_SUBNET}
+	handle @allowed {
+		reverse_proxy homepage:3000
+	}
 
 	handle_errors {
 		@upstream_fail expression `{http.error.status_code} in [502,503,504]`
@@ -7,6 +10,8 @@ ${HOMEPAGE_SERVER_PREFIX}.${SERVER_NAME} {
 			respond "<h1>Homepage is not available at the moment</h1>" 200
 		}
 	}
+
+	respond "Forbidden" 403
 }
 
 ${ADGUARD_SERVER_PREFIX}.${SERVER_NAME} {
@@ -19,7 +24,10 @@ ${ADGUARD_SERVER_PREFIX}.${SERVER_NAME} {
 }
 
 ${TORTUGA_SERVER_PREFIX}.${SERVER_NAME} {
-	reverse_proxy tortuga:8096
+	@allowed remote_ip 192.168.8.0/24 ${VOIDROUTE_VPN_SUBNET}
+	handle @allowed {
+		reverse_proxy tortuga:8096
+	}
 
 	handle_errors {
 		@upstream_fail expression `{http.error.status_code} in [502,503,504]`
@@ -27,6 +35,8 @@ ${TORTUGA_SERVER_PREFIX}.${SERVER_NAME} {
 			respond "<h1>Tortuga (Jellyfin) is not available at the moment</h1>" 200
 		}
 	}
+
+	respond "Forbidden" 403
 }
 
 ${BLACKPEARL_SERVER_PREFIX}.${SERVER_NAME} {
