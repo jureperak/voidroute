@@ -70,16 +70,16 @@ jobs:
           BLACKPEARL_PASSWORD: ${{ secrets.BLACKPEARL_PASSWORD }}
           ADGUARD_SERVER_PREFIX: ${{ vars.ADGUARD_SERVER_PREFIX }}
           SONARR_SERVER_PREFIX: ${{ vars.SONARR_SERVER_PREFIX }}
+          SONARR_API_KEY: ${{ secrets.SONARR_API_KEY }}
         run: |
           mkdir -p "${{ vars.SERVER_BASE_PATH }}/homepage/config"
       
           # static files
           cp infra/homepage/config/settings.yaml "${{ vars.SERVER_BASE_PATH }}/homepage/config/" || true
-          cp infra/homepage/config/widgets.yaml "${{ vars.SERVER_BASE_PATH }}/homepage/config/" || true
           cp infra/homepage/config/docker.yaml "${{ vars.SERVER_BASE_PATH }}/homepage/config/" || true
 
           # templates → generate
-          envsubst '${SERVER_NAME} ${TORTUGA_SERVER_PREFIX} ${TORTUGA_API_KEY} ${BLACKPEARL_SERVER_PREFIX} ${BLACKPEARL_USERNAME} ${BLACKPEARL_PASSWORD} ${SONARR_SERVER_PREFIX}' \
+          envsubst '${SERVER_NAME} ${TORTUGA_SERVER_PREFIX} ${TORTUGA_API_KEY} ${BLACKPEARL_SERVER_PREFIX} ${BLACKPEARL_USERNAME} ${BLACKPEARL_PASSWORD} ${SONARR_SERVER_PREFIX} ${SONARR_API_KEY}' \
             < infra/homepage/config/services.yaml.template \
             > "${{ vars.SERVER_BASE_PATH }}/homepage/config/services.yaml"
       
