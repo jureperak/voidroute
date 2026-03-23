@@ -10,7 +10,7 @@ ${HOMEPAGE_SERVER_PREFIX}.${SERVER_NAME} {
 }
 
 ${ADGUARD_SERVER_PREFIX}.${SERVER_NAME} {
-	@allowed remote_ip 192.168.8.0/24 10.0.0.0/24
+	@allowed remote_ip 192.168.8.0/24 ${VOIDROUTE_VPN_SUBNET}
 	handle @allowed {
 		reverse_proxy 192.168.8.1:3000
 	}
@@ -30,7 +30,7 @@ ${TORTUGA_SERVER_PREFIX}.${SERVER_NAME} {
 }
 
 ${BLACKPEARL_SERVER_PREFIX}.${SERVER_NAME} {
-	@allowed remote_ip 192.168.8.0/24 10.0.0.0/24
+	@allowed remote_ip 192.168.8.0/24 ${VOIDROUTE_VPN_SUBNET}
 	handle @allowed {
 		reverse_proxy blackpearl:8080
 	}
