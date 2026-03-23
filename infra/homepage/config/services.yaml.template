@@ -31,3 +31,14 @@
           url: http://blackpearl:8080
           username: ${BLACKPEARL_USERNAME}
           password: ${BLACKPEARL_PASSWORD}
+
+    - Sonarr:
+        icon: sonarr.png
+        href: https://${SONARR_SERVER_PREFIX}.${SERVER_NAME}
+        description: TV management
+        server: my-docker
+        container: sonarr
+        widget:
+          type: sonarr
+          url: http://sonarr:8989
+          key: ${SONARR_API_KEY}
