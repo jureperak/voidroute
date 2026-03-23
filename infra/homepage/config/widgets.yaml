@@ -24,3 +24,15 @@
     longitude: 18.6624
     timezone: Europe/Zagreb
     units: metric
+
+- calendar:
+    view: agenda
+    maxEvents: 10
+    showTime: true
+    previousDays: 0
+    integrations:
+      - type: sonarr
+        service_group: Media
+        service_name: Sonarr
+        color: teal
+        baseUrl: https://${SONARR_SERVER_PREFIX}.${SERVER_NAME}
