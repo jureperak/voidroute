@@ -35,4 +35,5 @@
         service_group: Media
         service_name: Sonarr
         color: teal
-        baseUrl: https://{{HOMEPAGE_VAR_SONARR_SERVER_PREFIX}}.{{HOMEPAGE_VAR_SERVER_NAME}}
+        baseUrl: http://{{HOMEPAGE_VAR_SONARR_CONTAINER}}:8989
+        key: {{HOMEPAGE_VAR_SONARR_API_KEY}}
