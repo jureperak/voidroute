@@ -1,0 +1,44 @@
+- Infra:
+    - Caddy:
+        icon: caddy.png
+        description: Reverse proxy
+        server: my-docker
+        container: ${CADDY_CONTAINER}
+        widget:
+          type: caddy
+          url: http://${CADDY_CONTAINER}:2019
+
+- Media:
+    - Tortuga:
+        icon: jellyfin.png
+        href: https://${TORTUGA_SERVER_PREFIX}.${SERVER_NAME}
+        description: Movies and TV
+        server: my-docker
+        container: ${TORTUGA_CONTAINER}
+        widget:
+          type: jellyfin
+          url: http://${TORTUGA_CONTAINER}:8096
+          key: ${TORTUGA_API_KEY}
+
+    - Blackpearl:
+        icon: qbittorrent.png
+        href: https://${BLACKPEARL_SERVER_PREFIX}.${SERVER_NAME}
+        description: Downloads
+        server: my-docker
+        container: ${BLACKPEARL_CONTAINER}
+        widget:
+          type: qbittorrent
+          url: http://${BLACKPEARL_CONTAINER}:8080
+          username: ${BLACKPEARL_USERNAME}
+          password: ${BLACKPEARL_PASSWORD}
+
+    - Sonarr:
+        icon: sonarr.png
+        href: https://${SONARR_SERVER_PREFIX}.${SERVER_NAME}
+        description: TV management
+        server: my-docker
+        container: ${SONARR_CONTAINER}
+        widget:
+          type: sonarr
+          url: http://${SONARR_CONTAINER}:8989
+          key: ${SONARR_API_KEY}

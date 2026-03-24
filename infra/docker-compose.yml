@@ -30,28 +30,11 @@ services:
     container_name: ${HOMEPAGE_CONTAINER}
     restart: unless-stopped
     volumes:
-      - ./homepage/config/bookmarks.yaml:/app/config/bookmarks.yaml:ro
-      - ./homepage/config/docker.yaml:/app/config/docker.yaml:ro
-      - ./homepage/config/services.yaml:/app/config/services.yaml:ro
-      - ./homepage/config/settings.yaml:/app/config/settings.yaml:ro
-      - ./homepage/config/widgets.yaml:/app/config/widgets.yaml:ro
+      - ${SERVER_BASE_PATH}/homepage/config:/app/config
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ${SERVER_BASE_PATH}/homepage/images:/app/public/images
     environment:
       HOMEPAGE_ALLOWED_HOSTS: ${HOMEPAGE_SERVER_PREFIX}.${SERVER_NAME}
-      HOMEPAGE_VAR_SERVER_NAME: ${SERVER_NAME}
-      HOMEPAGE_VAR_TORTUGA_SERVER_PREFIX: ${TORTUGA_SERVER_PREFIX}
-      HOMEPAGE_VAR_BLACKPEARL_SERVER_PREFIX: ${BLACKPEARL_SERVER_PREFIX}
-      HOMEPAGE_VAR_SONARR_SERVER_PREFIX: ${SONARR_SERVER_PREFIX}
-      HOMEPAGE_VAR_ADGUARD_SERVER_PREFIX: ${ADGUARD_SERVER_PREFIX}
-      HOMEPAGE_VAR_TORTUGA_API_KEY: ${TORTUGA_API_KEY}
-      HOMEPAGE_VAR_BLACKPEARL_USERNAME: ${BLACKPEARL_USERNAME}
-      HOMEPAGE_VAR_BLACKPEARL_PASSWORD: ${BLACKPEARL_PASSWORD}
-      HOMEPAGE_VAR_SONARR_API_KEY: ${SONARR_API_KEY}
-      HOMEPAGE_VAR_CADDY_CONTAINER: ${CADDY_CONTAINER}
-      HOMEPAGE_VAR_TORTUGA_CONTAINER: ${TORTUGA_CONTAINER}
-      HOMEPAGE_VAR_BLACKPEARL_CONTAINER: ${BLACKPEARL_CONTAINER}
-      HOMEPAGE_VAR_SONARR_CONTAINER: ${SONARR_CONTAINER}
     networks:
       - voidroute
 

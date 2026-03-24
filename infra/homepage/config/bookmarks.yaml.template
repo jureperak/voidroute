@@ -1,0 +1,9 @@
+- Admin:
+    - AdBuster:
+        - href: https://${ADGUARD_SERVER_PREFIX}.${SERVER_NAME}
+    - Router:
+        - href: http://192.168.8.1
+    - Tortuga:
+        - href: https://${TORTUGA_SERVER_PREFIX}.${SERVER_NAME}
+    - Blackpearl:
+        - href: http://${BLACKPEARL_SERVER_PREFIX}.${SERVER_NAME}

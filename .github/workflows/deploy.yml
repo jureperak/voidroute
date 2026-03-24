@@ -54,6 +54,18 @@ jobs:
           docker network inspect "$DOCKER_NETWORK" >/dev/null 2>&1 || \
           docker network create "$DOCKER_NETWORK"
 
+      - name: Generate Homepage config
+        run: |
+          set -a && source "$ENV_FILE" && set +a
+          mkdir -p "$SERVER_BASE_PATH/homepage/config"
+
+          cp infra/homepage/config/settings.yaml "$SERVER_BASE_PATH/homepage/config/"
+          cp infra/homepage/config/docker.yaml "$SERVER_BASE_PATH/homepage/config/"
+          cp infra/homepage/config/widgets.yaml "$SERVER_BASE_PATH/homepage/config/"
+
+          envsubst < infra/homepage/config/services.yaml.template > "$SERVER_BASE_PATH/homepage/config/services.yaml"
+          envsubst < infra/homepage/config/bookmarks.yaml.template > "$SERVER_BASE_PATH/homepage/config/bookmarks.yaml"
+
       - name: Deploy stack
         run: |
           cd infra
