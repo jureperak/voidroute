@@ -2,10 +2,10 @@
 	admin 0.0.0.0:2019
 }
 
-${HOMEPAGE_SERVER_PREFIX}.${SERVER_NAME} {
-	@allowed remote_ip 192.168.8.0/24 ${VOIDROUTE_VPN_SUBNET}
+{$HOMEPAGE_SERVER_PREFIX}.{$SERVER_NAME} {
+	@allowed remote_ip 192.168.8.0/24 {$VOIDROUTE_VPN_SUBNET}
 	handle @allowed {
-		reverse_proxy homepage:3000
+		reverse_proxy {$HOMEPAGE_CONTAINER}:3000
 	}
 
 	handle_errors {
@@ -18,8 +18,8 @@ ${HOMEPAGE_SERVER_PREFIX}.${SERVER_NAME} {
 	respond "Forbidden" 403
 }
 
-${ADGUARD_SERVER_PREFIX}.${SERVER_NAME} {
-	@allowed remote_ip 192.168.8.0/24 ${VOIDROUTE_VPN_SUBNET}
+{$ADGUARD_SERVER_PREFIX}.{$SERVER_NAME} {
+	@allowed remote_ip 192.168.8.0/24 {$VOIDROUTE_VPN_SUBNET}
 	handle @allowed {
 		reverse_proxy 192.168.8.1:3000
 	}
@@ -27,10 +27,10 @@ ${ADGUARD_SERVER_PREFIX}.${SERVER_NAME} {
 	respond "Forbidden" 403
 }
 
-${TORTUGA_SERVER_PREFIX}.${SERVER_NAME} {
-	@allowed remote_ip 192.168.8.0/24 ${VOIDROUTE_VPN_SUBNET}
+{$TORTUGA_SERVER_PREFIX}.{$SERVER_NAME} {
+	@allowed remote_ip 192.168.8.0/24 {$VOIDROUTE_VPN_SUBNET}
 	handle @allowed {
-		reverse_proxy tortuga:8096
+		reverse_proxy {$TORTUGA_CONTAINER}:8096
 	}
 
 	handle_errors {
@@ -43,10 +43,10 @@ ${TORTUGA_SERVER_PREFIX}.${SERVER_NAME} {
 	respond "Forbidden" 403
 }
 
-${BLACKPEARL_SERVER_PREFIX}.${SERVER_NAME} {
-	@allowed remote_ip 192.168.8.0/24 ${VOIDROUTE_VPN_SUBNET}
+{$BLACKPEARL_SERVER_PREFIX}.{$SERVER_NAME} {
+	@allowed remote_ip 192.168.8.0/24 {$VOIDROUTE_VPN_SUBNET}
 	handle @allowed {
-		reverse_proxy blackpearl:8080
+		reverse_proxy {$BLACKPEARL_CONTAINER}:8080
 	}
 
 	handle_errors {
@@ -59,10 +59,10 @@ ${BLACKPEARL_SERVER_PREFIX}.${SERVER_NAME} {
 	respond "Forbidden" 403
 }
 
-${SONARR_SERVER_PREFIX}.${SERVER_NAME} {
-	@allowed remote_ip 192.168.8.0/24 ${VOIDROUTE_VPN_SUBNET}
+{$SONARR_SERVER_PREFIX}.{$SERVER_NAME} {
+	@allowed remote_ip 192.168.8.0/24 {$VOIDROUTE_VPN_SUBNET}
 	handle @allowed {
-		reverse_proxy sonarr:8989
+		reverse_proxy {$SONARR_CONTAINER}:8989
 	}
 
 	handle_errors {

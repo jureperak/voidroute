@@ -1,0 +1,102 @@
+services:
+  caddy:
+    image: caddy:2
+    container_name: ${CADDY_CONTAINER}
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - ${SERVER_BASE_PATH}/caddy/data:/data
+      - ${SERVER_BASE_PATH}/caddy/config:/config
+    environment:
+      - SERVER_NAME=${SERVER_NAME}
+      - HOMEPAGE_SERVER_PREFIX=${HOMEPAGE_SERVER_PREFIX}
+      - ADGUARD_SERVER_PREFIX=${ADGUARD_SERVER_PREFIX}
+      - TORTUGA_SERVER_PREFIX=${TORTUGA_SERVER_PREFIX}
+      - BLACKPEARL_SERVER_PREFIX=${BLACKPEARL_SERVER_PREFIX}
+      - SONARR_SERVER_PREFIX=${SONARR_SERVER_PREFIX}
+      - VOIDROUTE_VPN_SUBNET=${VOIDROUTE_VPN_SUBNET}
+      - HOMEPAGE_CONTAINER=${HOMEPAGE_CONTAINER}
+      - TORTUGA_CONTAINER=${TORTUGA_CONTAINER}
+      - BLACKPEARL_CONTAINER=${BLACKPEARL_CONTAINER}
+      - SONARR_CONTAINER=${SONARR_CONTAINER}
+    networks:
+      - voidroute
+
+  homepage:
+    image: ghcr.io/gethomepage/homepage:latest
+    container_name: ${HOMEPAGE_CONTAINER}
+    restart: unless-stopped
+    volumes:
+      - ./homepage/config:/app/config
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ${SERVER_BASE_PATH}/homepage/images:/app/public/images
+    environment:
+      HOMEPAGE_ALLOWED_HOSTS: ${HOMEPAGE_SERVER_PREFIX}.${SERVER_NAME}
+      HOMEPAGE_VAR_SERVER_NAME: ${SERVER_NAME}
+      HOMEPAGE_VAR_TORTUGA_SERVER_PREFIX: ${TORTUGA_SERVER_PREFIX}
+      HOMEPAGE_VAR_BLACKPEARL_SERVER_PREFIX: ${BLACKPEARL_SERVER_PREFIX}
+      HOMEPAGE_VAR_SONARR_SERVER_PREFIX: ${SONARR_SERVER_PREFIX}
+      HOMEPAGE_VAR_ADGUARD_SERVER_PREFIX: ${ADGUARD_SERVER_PREFIX}
+      HOMEPAGE_VAR_TORTUGA_API_KEY: ${TORTUGA_API_KEY}
+      HOMEPAGE_VAR_BLACKPEARL_USERNAME: ${BLACKPEARL_USERNAME}
+      HOMEPAGE_VAR_BLACKPEARL_PASSWORD: ${BLACKPEARL_PASSWORD}
+      HOMEPAGE_VAR_SONARR_API_KEY: ${SONARR_API_KEY}
+      HOMEPAGE_VAR_CADDY_CONTAINER: ${CADDY_CONTAINER}
+      HOMEPAGE_VAR_TORTUGA_CONTAINER: ${TORTUGA_CONTAINER}
+      HOMEPAGE_VAR_BLACKPEARL_CONTAINER: ${BLACKPEARL_CONTAINER}
+      HOMEPAGE_VAR_SONARR_CONTAINER: ${SONARR_CONTAINER}
+    networks:
+      - voidroute
+
+  tortuga:
+    image: lscr.io/linuxserver/jellyfin
+    container_name: ${TORTUGA_CONTAINER}
+    restart: unless-stopped
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${MEDIA_ROOT}/config/jellyfin:/config
+      - ${MEDIA_ROOT}/media/movies:/media/movies
+      - ${MEDIA_ROOT}/media/shows:/media/shows
+    networks:
+      - voidroute
+
+  blackpearl:
+    image: lscr.io/linuxserver/qbittorrent
+    container_name: ${BLACKPEARL_CONTAINER}
+    restart: unless-stopped
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - WEBUI_PORT=8080
+    volumes:
+      - ${MEDIA_ROOT}/config/qbittorrent:/config
+      - ${MEDIA_ROOT}/downloads:/downloads
+    networks:
+      - voidroute
+
+  sonarr:
+    image: lscr.io/linuxserver/sonarr
+    container_name: ${SONARR_CONTAINER}
+    restart: unless-stopped
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${MEDIA_ROOT}/config/sonarr:/config
+      - ${MEDIA_ROOT}/media:/media
+      - ${MEDIA_ROOT}/downloads:/downloads
+    networks:
+      - voidroute
+
+networks:
+  voidroute:
+    external: true
+    name: ${DOCKER_NETWORK}
