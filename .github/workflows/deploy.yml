@@ -58,7 +58,7 @@ jobs:
         run: |
           cd infra
           docker compose --env-file "$ENV_FILE" pull
-          docker compose --env-file "$ENV_FILE" up -d --remove-orphans
+          docker compose --env-file "$ENV_FILE" up -d --force-recreate --remove-orphans
 
           docker image prune -f
           docker container prune -f
