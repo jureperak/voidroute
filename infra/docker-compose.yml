@@ -30,7 +30,11 @@ services:
     container_name: ${HOMEPAGE_CONTAINER}
     restart: unless-stopped
     volumes:
-      - ./homepage/config:/app/config
+      - ./homepage/config/bookmarks.yaml:/app/config/bookmarks.yaml:ro
+      - ./homepage/config/docker.yaml:/app/config/docker.yaml:ro
+      - ./homepage/config/services.yaml:/app/config/services.yaml:ro
+      - ./homepage/config/settings.yaml:/app/config/settings.yaml:ro
+      - ./homepage/config/widgets.yaml:/app/config/widgets.yaml:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ${SERVER_BASE_PATH}/homepage/images:/app/public/images
     environment:
