@@ -26,12 +26,15 @@
     units: metric
 
 - calendar:
+    type: calendar
     view: agenda
-    maxEvents: 10
-    showTime: true
-    previousDays: 0
-    integrations:
-      - type: sonarr
-        service_group: Media
-        service_name: Sonarr
-        color: teal
+    maxEvents: 10 # optional - defaults to 10
+    showTime: true # optional - show time for event happening today - defaults to false
+    previousDays: 3 # optional - shows events since three days ago - defaults to 0
+    integrations: # same as in Monthly view example
+      - type: sonarr # active widget type that is currently enabled on homepage - possible values: radarr, sonarr, lidarr, readarr, ical
+        service_group: Media # group name where widget exists
+        service_name: Sonarr # service name for that widget
+        color: teal # optional - defaults to pre-defined color for the service (teal for sonarr)
+        params: # optional - additional params for the service
+          unmonitored: true # optional - defaults to false, used with *arr stack
