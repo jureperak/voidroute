@@ -3,42 +3,86 @@
         icon: caddy.png
         description: Reverse proxy
         server: my-docker
-        container: ${CADDY_CONTAINER}
+        container: caddy
         widget:
           type: caddy
-          url: http://${CADDY_CONTAINER}:2019
+          url: http://caddy:2019
 
 - Media:
-    - Tortuga:
+    - Jellyfin:
         icon: jellyfin.png
-        href: https://${TORTUGA_SERVER_PREFIX}.${SERVER_NAME}
+        href: https://jellyfin.${SERVER_NAME}
         description: Movies and TV
         server: my-docker
-        container: ${TORTUGA_CONTAINER}
+        container: jellyfin
         widget:
           type: jellyfin
-          url: http://${TORTUGA_CONTAINER}:8096
-          key: ${TORTUGA_API_KEY}
+          url: http://jellyfin:8096
+          key: ${JELLYFIN_API_KEY}
 
-    - Blackpearl:
-        icon: qbittorrent.png
-        href: https://${BLACKPEARL_SERVER_PREFIX}.${SERVER_NAME}
-        description: Downloads
+    - Jellyseerr:
+        icon: jellyseerr.png
+        href: https://jellyseerr.${SERVER_NAME}
+        description: Requests
         server: my-docker
-        container: ${BLACKPEARL_CONTAINER}
+        container: jellyseerr
         widget:
-          type: qbittorrent
-          url: http://${BLACKPEARL_CONTAINER}:8080
-          username: ${BLACKPEARL_USERNAME}
-          password: ${BLACKPEARL_PASSWORD}
+          type: jellyseerr
+          url: http://jellyseerr:5055
+          key: ${JELLYSEERR_API_KEY}
 
     - Sonarr:
         icon: sonarr.png
-        href: https://${SONARR_SERVER_PREFIX}.${SERVER_NAME}
+        href: https://sonarr.${SERVER_NAME}
         description: TV management
         server: my-docker
-        container: ${SONARR_CONTAINER}
+        container: sonarr
         widget:
           type: sonarr
-          url: http://${SONARR_CONTAINER}:8989
+          url: http://sonarr:8989
           key: ${SONARR_API_KEY}
+
+    - Radarr:
+        icon: radarr.png
+        href: https://radarr.${SERVER_NAME}
+        description: Movie management
+        server: my-docker
+        container: radarr
+        widget:
+          type: radarr
+          url: http://radarr:7878
+          key: ${RADARR_API_KEY}
+
+    - Bazarr:
+        icon: bazarr.png
+        href: https://bazarr.${SERVER_NAME}
+        description: Subtitles
+        server: my-docker
+        container: bazarr
+        widget:
+          type: bazarr
+          url: http://bazarr:6767
+          key: ${BAZARR_API_KEY}
+
+    - Prowlarr:
+        icon: prowlarr.png
+        href: https://prowlarr.${SERVER_NAME}
+        description: Indexer management
+        server: my-docker
+        container: prowlarr
+        widget:
+          type: prowlarr
+          url: http://prowlarr:9696
+          key: ${PROWLARR_API_KEY}
+
+    - qBittorrent:
+        icon: qbittorrent.png
+        href: https://qbittorrent.${SERVER_NAME}
+        description: Downloads
+        server: my-docker
+        container: qbittorrent
+        widget:
+          type: qbittorrent
+          url: http://qbittorrent:8080
+          username: ${QBITTORRENT_USERNAME}
+          password: ${QBITTORRENT_PASSWORD}

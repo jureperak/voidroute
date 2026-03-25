@@ -2,10 +2,10 @@
 	admin 0.0.0.0:2019
 }
 
-{$HOMEPAGE_SERVER_PREFIX}.{$SERVER_NAME} {
+homepage.{$SERVER_NAME} {
 	@allowed remote_ip 192.168.8.0/24 {$VOIDROUTE_VPN_SUBNET}
 	handle @allowed {
-		reverse_proxy {$HOMEPAGE_CONTAINER}:3000
+		reverse_proxy homepage:3000
 	}
 
 	handle_errors {
@@ -18,7 +18,7 @@
 	respond "Forbidden" 403
 }
 
-{$ADGUARD_SERVER_PREFIX}.{$SERVER_NAME} {
+adguard.{$SERVER_NAME} {
 	@allowed remote_ip 192.168.8.0/24 {$VOIDROUTE_VPN_SUBNET}
 	handle @allowed {
 		reverse_proxy 192.168.8.1:3000
@@ -27,48 +27,112 @@
 	respond "Forbidden" 403
 }
 
-{$TORTUGA_SERVER_PREFIX}.{$SERVER_NAME} {
+jellyfin.{$SERVER_NAME} {
 	@allowed remote_ip 192.168.8.0/24 {$VOIDROUTE_VPN_SUBNET}
 	handle @allowed {
-		reverse_proxy {$TORTUGA_CONTAINER}:8096
+		reverse_proxy jellyfin:8096
 	}
 
 	handle_errors {
 		@upstream_fail expression `{http.error.status_code} in [502,503,504]`
 		handle @upstream_fail {
-			respond "<h1>Tortuga (Jellyfin) is not available at the moment</h1>" 200
+			respond "<h1>Jellyfin is not available at the moment</h1>" 200
 		}
 	}
 
 	respond "Forbidden" 403
 }
 
-{$BLACKPEARL_SERVER_PREFIX}.{$SERVER_NAME} {
+qbittorrent.{$SERVER_NAME} {
 	@allowed remote_ip 192.168.8.0/24 {$VOIDROUTE_VPN_SUBNET}
 	handle @allowed {
-		reverse_proxy {$BLACKPEARL_CONTAINER}:8080
+		reverse_proxy qbittorrent:8080
 	}
 
 	handle_errors {
 		@upstream_fail expression `{http.error.status_code} in [502,503,504]`
 		handle @upstream_fail {
-			respond "<h1>Blackpearl is not available at the moment</h1>" 200
+			respond "<h1>qBittorrent is not available at the moment</h1>" 200
 		}
 	}
 
 	respond "Forbidden" 403
 }
 
-{$SONARR_SERVER_PREFIX}.{$SERVER_NAME} {
+sonarr.{$SERVER_NAME} {
 	@allowed remote_ip 192.168.8.0/24 {$VOIDROUTE_VPN_SUBNET}
 	handle @allowed {
-		reverse_proxy {$SONARR_CONTAINER}:8989
+		reverse_proxy sonarr:8989
 	}
 
 	handle_errors {
 		@upstream_fail expression `{http.error.status_code} in [502,503,504]`
 		handle @upstream_fail {
 			respond "<h1>Sonarr is not available at the moment</h1>" 200
+		}
+	}
+
+	respond "Forbidden" 403
+}
+
+radarr.{$SERVER_NAME} {
+	@allowed remote_ip 192.168.8.0/24 {$VOIDROUTE_VPN_SUBNET}
+	handle @allowed {
+		reverse_proxy radarr:7878
+	}
+
+	handle_errors {
+		@upstream_fail expression `{http.error.status_code} in [502,503,504]`
+		handle @upstream_fail {
+			respond "<h1>Radarr is not available at the moment</h1>" 200
+		}
+	}
+
+	respond "Forbidden" 403
+}
+
+prowlarr.{$SERVER_NAME} {
+	@allowed remote_ip 192.168.8.0/24 {$VOIDROUTE_VPN_SUBNET}
+	handle @allowed {
+		reverse_proxy prowlarr:9696
+	}
+
+	handle_errors {
+		@upstream_fail expression `{http.error.status_code} in [502,503,504]`
+		handle @upstream_fail {
+			respond "<h1>Prowlarr is not available at the moment</h1>" 200
+		}
+	}
+
+	respond "Forbidden" 403
+}
+
+bazarr.{$SERVER_NAME} {
+	@allowed remote_ip 192.168.8.0/24 {$VOIDROUTE_VPN_SUBNET}
+	handle @allowed {
+		reverse_proxy bazarr:6767
+	}
+
+	handle_errors {
+		@upstream_fail expression `{http.error.status_code} in [502,503,504]`
+		handle @upstream_fail {
+			respond "<h1>Bazarr is not available at the moment</h1>" 200
+		}
+	}
+
+	respond "Forbidden" 403
+}
+
+jellyseerr.{$SERVER_NAME} {
+	@allowed remote_ip 192.168.8.0/24 {$VOIDROUTE_VPN_SUBNET}
+	handle @allowed {
+		reverse_proxy jellyseerr:5055
+	}
+
+	handle_errors {
+		@upstream_fail expression `{http.error.status_code} in [502,503,504]`
+		handle @upstream_fail {
+			respond "<h1>Jellyseerr is not available at the moment</h1>" 200
 		}
 	}
 

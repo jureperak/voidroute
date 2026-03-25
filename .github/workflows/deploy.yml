@@ -24,28 +24,19 @@ jobs:
           SERVER_NAME: ${{ vars.SERVER_NAME }}
           SERVER_BASE_PATH: ${{ vars.SERVER_BASE_PATH }}
           DOCKER_NETWORK: ${{ vars.DOCKER_NETWORK }}
-          CADDY_CONTAINER: ${{ vars.CADDY_CONTAINER }}
-          HOMEPAGE_CONTAINER: ${{ vars.HOMEPAGE_CONTAINER }}
-          TORTUGA_CONTAINER: ${{ vars.TORTUGA_CONTAINER }}
-          BLACKPEARL_CONTAINER: ${{ vars.BLACKPEARL_CONTAINER }}
-          SONARR_CONTAINER: ${{ vars.SONARR_CONTAINER }}
-          HOMEPAGE_SERVER_PREFIX: ${{ vars.HOMEPAGE_SERVER_PREFIX }}
-          ADGUARD_SERVER_PREFIX: ${{ vars.ADGUARD_SERVER_PREFIX }}
-          TORTUGA_SERVER_PREFIX: ${{ vars.TORTUGA_SERVER_PREFIX }}
-          BLACKPEARL_SERVER_PREFIX: ${{ vars.BLACKPEARL_SERVER_PREFIX }}
-          SONARR_SERVER_PREFIX: ${{ vars.SONARR_SERVER_PREFIX }}
           VOIDROUTE_VPN_SUBNET: ${{ vars.VOIDROUTE_VPN_SUBNET }}
           MEDIA_ROOT: ${{ vars.MEDIA_ROOT }}
           TZ: ${{ vars.TZ }}
           PUID: ${{ vars.PUID }}
           PGID: ${{ vars.PGID }}
-          PG_CONTAINER: ${{ vars.PG_CONTAINER }}
-          PG_VOLUME: ${{ vars.PG_VOLUME }}
-          PG_PORT_BIND: ${{ vars.PG_PORT_BIND }}
-          TORTUGA_API_KEY: ${{ secrets.TORTUGA_API_KEY }}
-          BLACKPEARL_USERNAME: ${{ secrets.BLACKPEARL_USERNAME }}
-          BLACKPEARL_PASSWORD: ${{ secrets.BLACKPEARL_PASSWORD }}
+          JELLYFIN_API_KEY: ${{ secrets.JELLYFIN_API_KEY }}
+          QBITTORRENT_USERNAME: ${{ secrets.QBITTORRENT_USERNAME }}
+          QBITTORRENT_PASSWORD: ${{ secrets.QBITTORRENT_PASSWORD }}
           SONARR_API_KEY: ${{ secrets.SONARR_API_KEY }}
+          RADARR_API_KEY: ${{ secrets.RADARR_API_KEY }}
+          PROWLARR_API_KEY: ${{ secrets.PROWLARR_API_KEY }}
+          BAZARR_API_KEY: ${{ secrets.BAZARR_API_KEY }}
+          JELLYSEERR_API_KEY: ${{ secrets.JELLYSEERR_API_KEY }}
           POSTGRES_ADMIN_PASSWORD: ${{ secrets.POSTGRES_ADMIN_PASSWORD }}
 
       - name: Ensure docker network exists

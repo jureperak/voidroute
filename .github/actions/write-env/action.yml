@@ -8,26 +8,6 @@ inputs:
     required: true
   DOCKER_NETWORK:
     required: true
-  CADDY_CONTAINER:
-    required: true
-  HOMEPAGE_CONTAINER:
-    required: true
-  TORTUGA_CONTAINER:
-    required: true
-  BLACKPEARL_CONTAINER:
-    required: true
-  SONARR_CONTAINER:
-    required: true
-  HOMEPAGE_SERVER_PREFIX:
-    required: true
-  ADGUARD_SERVER_PREFIX:
-    required: true
-  TORTUGA_SERVER_PREFIX:
-    required: true
-  BLACKPEARL_SERVER_PREFIX:
-    required: true
-  SONARR_SERVER_PREFIX:
-    required: true
   VOIDROUTE_VPN_SUBNET:
     required: true
   MEDIA_ROOT:
@@ -38,19 +18,21 @@ inputs:
     required: true
   PGID:
     required: true
-  PG_CONTAINER:
+  JELLYFIN_API_KEY:
     required: true
-  PG_VOLUME:
+  QBITTORRENT_USERNAME:
     required: true
-  PG_PORT_BIND:
-    required: true
-  TORTUGA_API_KEY:
-    required: true
-  BLACKPEARL_USERNAME:
-    required: true
-  BLACKPEARL_PASSWORD:
+  QBITTORRENT_PASSWORD:
     required: true
   SONARR_API_KEY:
+    required: true
+  RADARR_API_KEY:
+    required: true
+  PROWLARR_API_KEY:
+    required: true
+  BAZARR_API_KEY:
+    required: true
+  JELLYSEERR_API_KEY:
     required: true
   POSTGRES_ADMIN_PASSWORD:
     required: true
@@ -66,28 +48,19 @@ runs:
         SERVER_NAME=${{ inputs.SERVER_NAME }}
         SERVER_BASE_PATH=${{ inputs.SERVER_BASE_PATH }}
         DOCKER_NETWORK=${{ inputs.DOCKER_NETWORK }}
-        CADDY_CONTAINER=${{ inputs.CADDY_CONTAINER }}
-        HOMEPAGE_CONTAINER=${{ inputs.HOMEPAGE_CONTAINER }}
-        TORTUGA_CONTAINER=${{ inputs.TORTUGA_CONTAINER }}
-        BLACKPEARL_CONTAINER=${{ inputs.BLACKPEARL_CONTAINER }}
-        SONARR_CONTAINER=${{ inputs.SONARR_CONTAINER }}
-        HOMEPAGE_SERVER_PREFIX=${{ inputs.HOMEPAGE_SERVER_PREFIX }}
-        ADGUARD_SERVER_PREFIX=${{ inputs.ADGUARD_SERVER_PREFIX }}
-        TORTUGA_SERVER_PREFIX=${{ inputs.TORTUGA_SERVER_PREFIX }}
-        BLACKPEARL_SERVER_PREFIX=${{ inputs.BLACKPEARL_SERVER_PREFIX }}
-        SONARR_SERVER_PREFIX=${{ inputs.SONARR_SERVER_PREFIX }}
         VOIDROUTE_VPN_SUBNET=${{ inputs.VOIDROUTE_VPN_SUBNET }}
         MEDIA_ROOT=${{ inputs.MEDIA_ROOT }}
         TZ=${{ inputs.TZ }}
         PUID=${{ inputs.PUID }}
         PGID=${{ inputs.PGID }}
-        PG_CONTAINER=${{ inputs.PG_CONTAINER }}
-        PG_VOLUME=${{ inputs.PG_VOLUME }}
-        PG_PORT_BIND=${{ inputs.PG_PORT_BIND }}
-        TORTUGA_API_KEY=${{ inputs.TORTUGA_API_KEY }}
-        BLACKPEARL_USERNAME=${{ inputs.BLACKPEARL_USERNAME }}
-        BLACKPEARL_PASSWORD=${{ inputs.BLACKPEARL_PASSWORD }}
+        JELLYFIN_API_KEY=${{ inputs.JELLYFIN_API_KEY }}
+        QBITTORRENT_USERNAME=${{ inputs.QBITTORRENT_USERNAME }}
+        QBITTORRENT_PASSWORD=${{ inputs.QBITTORRENT_PASSWORD }}
         SONARR_API_KEY=${{ inputs.SONARR_API_KEY }}
+        RADARR_API_KEY=${{ inputs.RADARR_API_KEY }}
+        PROWLARR_API_KEY=${{ inputs.PROWLARR_API_KEY }}
+        BAZARR_API_KEY=${{ inputs.BAZARR_API_KEY }}
+        JELLYSEERR_API_KEY=${{ inputs.JELLYSEERR_API_KEY }}
         POSTGRES_ADMIN_PASSWORD=${{ inputs.POSTGRES_ADMIN_PASSWORD }}
         EOF
         sed -i 's/^[[:space:]]*//' "${{ inputs.SERVER_BASE_PATH }}/.env"

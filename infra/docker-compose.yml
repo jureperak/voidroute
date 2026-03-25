@@ -1,7 +1,7 @@
 services:
   caddy:
     image: caddy:2
-    container_name: ${CADDY_CONTAINER}
+    container_name: caddy
     restart: unless-stopped
     ports:
       - "80:80"
@@ -12,35 +12,26 @@ services:
       - ${SERVER_BASE_PATH}/caddy/config:/config
     environment:
       - SERVER_NAME=${SERVER_NAME}
-      - HOMEPAGE_SERVER_PREFIX=${HOMEPAGE_SERVER_PREFIX}
-      - ADGUARD_SERVER_PREFIX=${ADGUARD_SERVER_PREFIX}
-      - TORTUGA_SERVER_PREFIX=${TORTUGA_SERVER_PREFIX}
-      - BLACKPEARL_SERVER_PREFIX=${BLACKPEARL_SERVER_PREFIX}
-      - SONARR_SERVER_PREFIX=${SONARR_SERVER_PREFIX}
       - VOIDROUTE_VPN_SUBNET=${VOIDROUTE_VPN_SUBNET}
-      - HOMEPAGE_CONTAINER=${HOMEPAGE_CONTAINER}
-      - TORTUGA_CONTAINER=${TORTUGA_CONTAINER}
-      - BLACKPEARL_CONTAINER=${BLACKPEARL_CONTAINER}
-      - SONARR_CONTAINER=${SONARR_CONTAINER}
     networks:
       - voidroute
 
   homepage:
     image: ghcr.io/gethomepage/homepage:latest
-    container_name: ${HOMEPAGE_CONTAINER}
+    container_name: homepage
     restart: unless-stopped
     volumes:
       - ${SERVER_BASE_PATH}/homepage/config:/app/config
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ${SERVER_BASE_PATH}/homepage/images:/app/public/images
     environment:
-      HOMEPAGE_ALLOWED_HOSTS: ${HOMEPAGE_SERVER_PREFIX}.${SERVER_NAME}
+      HOMEPAGE_ALLOWED_HOSTS: homepage.${SERVER_NAME}
     networks:
       - voidroute
 
-  tortuga:
+  jellyfin:
     image: lscr.io/linuxserver/jellyfin
-    container_name: ${TORTUGA_CONTAINER}
+    container_name: jellyfin
     restart: unless-stopped
     environment:
       - PUID=${PUID}
@@ -49,13 +40,13 @@ services:
     volumes:
       - ${MEDIA_ROOT}/config/jellyfin:/config
       - ${MEDIA_ROOT}/media/movies:/media/movies
-      - ${MEDIA_ROOT}/media/shows:/media/shows
+      - ${MEDIA_ROOT}/media/series:/media/series
     networks:
       - voidroute
 
-  blackpearl:
+  qbittorrent:
     image: lscr.io/linuxserver/qbittorrent
-    container_name: ${BLACKPEARL_CONTAINER}
+    container_name: qbittorrent
     restart: unless-stopped
     environment:
       - PUID=${PUID}
@@ -70,7 +61,7 @@ services:
 
   sonarr:
     image: lscr.io/linuxserver/sonarr
-    container_name: ${SONARR_CONTAINER}
+    container_name: sonarr
     restart: unless-stopped
     environment:
       - PUID=${PUID}
@@ -80,6 +71,68 @@ services:
       - ${MEDIA_ROOT}/config/sonarr:/config
       - ${MEDIA_ROOT}/media:/media
       - ${MEDIA_ROOT}/downloads:/downloads
+    networks:
+      - voidroute
+
+  radarr:
+    image: lscr.io/linuxserver/radarr
+    container_name: radarr
+    restart: unless-stopped
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${MEDIA_ROOT}/config/radarr:/config
+      - ${MEDIA_ROOT}/media:/media
+      - ${MEDIA_ROOT}/downloads:/downloads
+    networks:
+      - voidroute
+
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr
+    container_name: prowlarr
+    restart: unless-stopped
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${MEDIA_ROOT}/config/prowlarr:/config
+    networks:
+      - voidroute
+
+  bazarr:
+    image: lscr.io/linuxserver/bazarr
+    container_name: bazarr
+    restart: unless-stopped
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${MEDIA_ROOT}/config/bazarr:/config
+      - ${MEDIA_ROOT}/media:/media
+    networks:
+      - voidroute
+
+  flaresolverr:
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    container_name: flaresolverr
+    restart: unless-stopped
+    environment:
+      - TZ=${TZ}
+    networks:
+      - voidroute
+
+  jellyseerr:
+    image: fallenbagel/jellyseerr:latest
+    container_name: jellyseerr
+    restart: unless-stopped
+    environment:
+      - TZ=${TZ}
+    volumes:
+      - ${MEDIA_ROOT}/config/jellyseerr:/app/config
     networks:
       - voidroute
 

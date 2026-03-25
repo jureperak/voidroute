@@ -3,13 +3,13 @@
     memory: true
     disk: /
     cputemp: true
-    tempmin: 0 # optional, minimum cpu temp
-    tempmax: 100 # optional, maximum cpu temp
+    tempmin: 0
+    tempmax: 100
     uptime: true
-    units: metric # only used by cpu temp, options: 'imperial' or 'metric'
-    refresh: 3000 # optional, in ms
-    diskUnits: bytes # optional, bytes (default) or bbytes. Only applies to disk
-    network: true # optional, uses 'default' if true or specify a network interface name
+    units: metric
+    refresh: 3000
+    diskUnits: bytes
+    network: true
 
 - datetime:
     locale: hr
@@ -28,13 +28,19 @@
 - calendar:
     type: calendar
     view: agenda
-    maxEvents: 10 # optional - defaults to 10
-    showTime: true # optional - show time for event happening today - defaults to false
-    previousDays: 3 # optional - shows events since three days ago - defaults to 0
-    integrations: # same as in Monthly view example
-      - type: sonarr # active widget type that is currently enabled on homepage - possible values: radarr, sonarr, lidarr, readarr, ical
-        service_group: Media # group name where widget exists
-        service_name: Sonarr # service name for that widget
-        color: teal # optional - defaults to pre-defined color for the service (teal for sonarr)
-        params: # optional - additional params for the service
-          unmonitored: true # optional - defaults to false, used with *arr stack
+    maxEvents: 10
+    showTime: true
+    previousDays: 3
+    integrations:
+      - type: sonarr
+        service_group: Media
+        service_name: Sonarr
+        color: teal
+        params:
+          unmonitored: true
+      - type: radarr
+        service_group: Media
+        service_name: Radarr
+        color: orange
+        params:
+          unmonitored: true
