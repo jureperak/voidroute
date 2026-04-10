@@ -3,44 +3,12 @@ name: Manual Deploy Postgres
 on:
   workflow_dispatch:
 
-env:
-  ENV_FILE: ${{ vars.SERVER_BASE_PATH }}/.env
-
 jobs:
   deploy:
     runs-on: self-hosted
     environment: Production
 
     steps:
-      - uses: actions/checkout@v5
-
-      - name: Write .env
-        uses: ./.github/actions/write-env
-        with:
-          SERVER_NAME: ${{ vars.SERVER_NAME }}
-          SERVER_BASE_PATH: ${{ vars.SERVER_BASE_PATH }}
-          DOCKER_NETWORK: ${{ vars.DOCKER_NETWORK }}
-          VOIDROUTE_VPN_SUBNET: ${{ vars.VOIDROUTE_VPN_SUBNET }}
-          MEDIA_ROOT: ${{ vars.MEDIA_ROOT }}
-          TZ: ${{ vars.TZ }}
-          PUID: ${{ vars.PUID }}
-          PGID: ${{ vars.PGID }}
-          JELLYFIN_API_KEY: ${{ secrets.JELLYFIN_API_KEY }}
-          QBITTORRENT_USERNAME: ${{ secrets.QBITTORRENT_USERNAME }}
-          QBITTORRENT_PASSWORD: ${{ secrets.QBITTORRENT_PASSWORD }}
-          SONARR_API_KEY: ${{ secrets.SONARR_API_KEY }}
-          RADARR_API_KEY: ${{ secrets.RADARR_API_KEY }}
-          PROWLARR_API_KEY: ${{ secrets.PROWLARR_API_KEY }}
-          BAZARR_API_KEY: ${{ secrets.BAZARR_API_KEY }}
-          JELLYSEERR_API_KEY: ${{ secrets.JELLYSEERR_API_KEY }}
-          POSTGRES_ADMIN_PASSWORD: ${{ secrets.POSTGRES_ADMIN_PASSWORD }}
-
-      - name: Ensure docker network exists
-        run: |
-          source "$ENV_FILE"
-          docker network inspect "$DOCKER_NETWORK" >/dev/null 2>&1 || \
-          docker network create "$DOCKER_NETWORK"
-
       - name: Ensure postgres volume exists
         run: docker volume inspect pg_data >/dev/null 2>&1 || docker volume create pg_data
 
@@ -52,13 +20,11 @@ jobs:
 
       - name: Run Postgres
         run: |
-          source "$ENV_FILE"
           docker run -d \
             --name postgres \
-            --network "$DOCKER_NETWORK" \
             --restart unless-stopped \
-            -p 127.0.0.1:5432:5432 \
-            -e POSTGRES_PASSWORD="$POSTGRES_ADMIN_PASSWORD" \
+            -p 5432:5432 \
+            -e POSTGRES_PASSWORD="${{ secrets.POSTGRES_ADMIN_PASSWORD }}" \
             -v "pg_data:/var/lib/postgresql/data" \
             postgres:16
 
