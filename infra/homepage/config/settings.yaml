@@ -1,10 +1,19 @@
 title: voidroute
 theme: dark
-color: slate
+color: zinc
 headerStyle: clean
+layout:
+  Infra:
+    style: row
+    columns: 1
+  Media:
+    style: row
+    columns: 4
 
 background:
   image: /images/bg.jpg
   opacity: 20
 
-cardBlur: xs
+cardBlur: md
+statusStyle: dot
+hideVersion: true
