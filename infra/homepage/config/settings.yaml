@@ -9,6 +9,7 @@ layout:
   Media:
     style: row
     columns: 4
+    header: false
 
 background:
   image: /images/bg.jpg
