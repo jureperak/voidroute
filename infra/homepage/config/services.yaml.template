@@ -1,3 +1,25 @@
+- Calendar:
+    - Calendar:
+        widget:
+          type: calendar
+          view: agenda
+          maxEvents: 10
+          showTime: true
+          previousDays: 3
+          integrations:
+            - type: sonarr
+              service_group: Media
+              service_name: Sonarr
+              color: teal
+              params:
+                unmonitored: true
+            - type: radarr
+              service_group: Media
+              service_name: Radarr
+              color: orange
+              params:
+                unmonitored: true
+
 - Infra:
     - Caddy:
         icon: caddy.png

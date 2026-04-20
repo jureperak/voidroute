@@ -3,6 +3,10 @@ theme: dark
 color: zinc
 headerStyle: clean
 layout:
+  Calendar:
+    style: row
+    columns: 1
+    header: false
   Infra:
     style: row
     columns: 1
