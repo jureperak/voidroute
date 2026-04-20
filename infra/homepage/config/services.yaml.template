@@ -2,8 +2,9 @@
     - Calendar:
         widget:
           type: calendar
-          view: agenda
-          maxEvents: 10
+          view: monthly
+          firstDayInWeek: monday
+          maxEvents: 7
           showTime: true
           previousDays: 3
           integrations:
