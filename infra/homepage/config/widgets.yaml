@@ -26,7 +26,6 @@
     units: metric
 
 - calendar:
-    type: calendar
     view: agenda
     maxEvents: 10
     showTime: true
