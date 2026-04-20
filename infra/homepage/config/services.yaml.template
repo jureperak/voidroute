@@ -21,6 +21,18 @@
               params:
                 unmonitored: true
 
+- Finance:
+    - Firefly III:
+        icon: firefly-iii.png
+        href: https://firefly.${SERVER_NAME}
+        description: Personal finance
+        server: my-docker
+        container: firefly
+        widget:
+          type: firefly
+          url: http://firefly:8080
+          key: ${FIREFLY_API_KEY}
+
 - Infra:
     - Caddy:
         icon: caddy.png

@@ -34,6 +34,12 @@ inputs:
     required: true
   JELLYSEERR_API_KEY:
     required: true
+  FIREFLY_API_KEY:
+    required: true
+  FIREFLY_APP_KEY:
+    required: true
+  FIREFLY_DB_PASSWORD:
+    required: true
   POSTGRES_ADMIN_PASSWORD:
     required: true
 
@@ -61,6 +67,9 @@ runs:
         PROWLARR_API_KEY=${{ inputs.PROWLARR_API_KEY }}
         BAZARR_API_KEY=${{ inputs.BAZARR_API_KEY }}
         JELLYSEERR_API_KEY=${{ inputs.JELLYSEERR_API_KEY }}
+        FIREFLY_API_KEY=${{ inputs.FIREFLY_API_KEY }}
+        FIREFLY_APP_KEY=${{ inputs.FIREFLY_APP_KEY }}
+        FIREFLY_DB_PASSWORD=${{ inputs.FIREFLY_DB_PASSWORD }}
         POSTGRES_ADMIN_PASSWORD=${{ inputs.POSTGRES_ADMIN_PASSWORD }}
         EOF
         sed -i 's/^[[:space:]]*//' "${{ inputs.SERVER_BASE_PATH }}/.env"

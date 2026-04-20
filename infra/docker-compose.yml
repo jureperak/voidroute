@@ -136,6 +136,26 @@ services:
     networks:
       - voidroute
 
+  firefly:
+    image: fireflyiii/core:latest
+    container_name: firefly
+    restart: unless-stopped
+    environment:
+      - APP_KEY=${FIREFLY_APP_KEY}
+      - DB_CONNECTION=pgsql
+      - DB_HOST=192.168.8.66
+      - DB_PORT=5432
+      - DB_DATABASE=firefly
+      - DB_USERNAME=firefly
+      - DB_PASSWORD=${FIREFLY_DB_PASSWORD}
+      - APP_URL=https://firefly.${SERVER_NAME}
+      - TRUSTED_PROXIES=**
+      - TZ=${TZ}
+    volumes:
+      - ${SERVER_BASE_PATH}/firefly/upload:/var/www/html/storage/upload
+    networks:
+      - voidroute
+
 networks:
   voidroute:
     external: true

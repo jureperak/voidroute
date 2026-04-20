@@ -37,6 +37,9 @@ jobs:
           PROWLARR_API_KEY: ${{ secrets.PROWLARR_API_KEY }}
           BAZARR_API_KEY: ${{ secrets.BAZARR_API_KEY }}
           JELLYSEERR_API_KEY: ${{ secrets.JELLYSEERR_API_KEY }}
+          FIREFLY_API_KEY: ${{ secrets.FIREFLY_API_KEY }}
+          FIREFLY_APP_KEY: ${{ secrets.FIREFLY_APP_KEY }}
+          FIREFLY_DB_PASSWORD: ${{ secrets.FIREFLY_DB_PASSWORD }}
           POSTGRES_ADMIN_PASSWORD: ${{ secrets.POSTGRES_ADMIN_PASSWORD }}
 
       - name: Ensure docker network exists
