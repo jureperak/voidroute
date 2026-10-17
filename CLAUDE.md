@@ -50,7 +50,7 @@ qBittorrent, Sonarr and Radarr mount `${MEDIA_ROOT}/data` as a single `/data` vo
 
 Deployments run via GitHub Actions on a **self-hosted runner** in the Production environment.
 
-- **`deploy.yml`**: Deploys the full stack (Caddy + Homepage + media services). Triggers on push to `main` touching `infra/**`, or manual dispatch. The `.env` on the server holds only the 8 non-secret variables; secrets are passed only to the Homepage templating step.
+- **`deploy.yml`**: Deploys the full stack (Caddy + Homepage + media services). Triggers only when a PR touching `infra/**` is merged into `main` (direct pushes to `main` do not deploy), or on manual dispatch from `main`. The `.env` on the server holds only the 8 non-secret variables; secrets are passed only to the Homepage templating step.
 - **`release-the-elephant.yml`**: Deploys PostgreSQL. Manual dispatch only.
 
 There are no local build or deploy commands — everything runs through GitHub Actions workflows.

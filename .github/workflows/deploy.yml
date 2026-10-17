@@ -2,7 +2,9 @@ name: Deploy
 
 on:
   workflow_dispatch:
-  push:
+  pull_request:
+    types:
+      - closed
     branches:
       - main
     paths:
@@ -25,12 +27,18 @@ env:
 
 jobs:
   deploy:
+    # Only merged PRs into main, or a manual run from main; closed-unmerged PRs never reach the runner
+    if: >-
+      (github.event_name == 'pull_request' && github.event.pull_request.merged == true) ||
+      (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main')
     runs-on: self-hosted
     environment: Production
 
     steps:
       - name: Checkout
         uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.pull_request.merge_commit_sha || github.sha }}
 
       - name: Write .env
         uses: ./.github/actions/write-env
