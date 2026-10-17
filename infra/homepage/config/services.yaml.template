@@ -29,7 +29,7 @@
         container: caddy
         widget:
           type: caddy
-          url: http://172.30.255.2:2019
+          url: http://172.30.254.2:2019
 
     - Portainer:
         icon: portainer.png

@@ -1,157 +1,51 @@
 {
-	# Admin API is reachable only on the homepage-internal network (see docker-compose.yml)
-	admin 172.30.255.2:2019
+	# Admin API is reachable only on the homepage-mgmt network (see docker-compose.yml)
+	admin 172.30.254.2:2019
 }
 
-homepage.{$SERVER_NAME} {
-	@allowed remote_ip 192.168.8.0/24 {$VOIDROUTE_VPN_SUBNET}
-	handle @allowed {
-		reverse_proxy homepage:3000
+# One subdomain -> one upstream. Usage: import service <subdomain> <upstream>
+(service) {
+	@{args[0]} host {args[0]}.{$SERVER_NAME}
+	handle @{args[0]} {
+		reverse_proxy {args[1]}
 	}
+}
 
-	handle_errors {
-		@upstream_fail expression `{http.error.status_code} in [502,503,504]`
-		handle @upstream_fail {
-			respond "<h1>Homepage is not available at the moment</h1>" 200
+# Split-brain DNS: AdGuard rewrites *.{$SERVER_NAME} to this server, so traffic
+# only ever arrives from the LAN or VPN. One wildcard cert via Porkbun DNS-01
+# means ports 80/443 never need to be reachable from the internet.
+*.{$SERVER_NAME} {
+	tls {
+		dns porkbun {
+			api_key {env.PORKBUN_API_KEY}
+			api_secret_key {env.PORKBUN_API_SECRET_KEY}
 		}
+		# Check challenge propagation against public DNS, not AdGuard's rewrites
+		resolvers 1.1.1.1 1.0.0.1
 	}
 
-	respond "Forbidden" 403
-}
-
-adguard.{$SERVER_NAME} {
-	@allowed remote_ip 192.168.8.0/24 {$VOIDROUTE_VPN_SUBNET}
-	handle @allowed {
-		reverse_proxy 192.168.8.1:3000
+	@outside not remote_ip 192.168.8.0/24 {$VOIDROUTE_VPN_SUBNET}
+	handle @outside {
+		respond "Forbidden" 403
 	}
 
-	respond "Forbidden" 403
-}
+	import service homepage homepage:3000
+	import service adguard 192.168.8.1:3000
+	import service portainer portainer:9000
+	import service jellyfin jellyfin:8096
+	import service jellyseerr jellyseerr:5055
+	import service qbittorrent qbittorrent:8080
+	import service sonarr sonarr:8989
+	import service radarr radarr:7878
+	import service prowlarr prowlarr:9696
+	import service bazarr bazarr:6767
 
-portainer.{$SERVER_NAME} {
-	@allowed remote_ip 192.168.8.0/24 {$VOIDROUTE_VPN_SUBNET}
-	handle @allowed {
-		reverse_proxy portainer:9000
+	handle {
+		respond "Not found" 404
 	}
 
-	handle_errors {
-		@upstream_fail expression `{http.error.status_code} in [502,503,504]`
-		handle @upstream_fail {
-			respond "<h1>Portainer is not available at the moment</h1>" 200
-		}
+	handle_errors 502 503 504 {
+		header Content-Type "text/html; charset=utf-8"
+		respond "<h1>{labels.2} is not available at the moment</h1>" {err.status_code}
 	}
-
-	respond "Forbidden" 403
-}
-
-jellyfin.{$SERVER_NAME} {
-	@allowed remote_ip 192.168.8.0/24 {$VOIDROUTE_VPN_SUBNET}
-	handle @allowed {
-		reverse_proxy jellyfin:8096
-	}
-
-	handle_errors {
-		@upstream_fail expression `{http.error.status_code} in [502,503,504]`
-		handle @upstream_fail {
-			respond "<h1>Jellyfin is not available at the moment</h1>" 200
-		}
-	}
-
-	respond "Forbidden" 403
-}
-
-qbittorrent.{$SERVER_NAME} {
-	@allowed remote_ip 192.168.8.0/24 {$VOIDROUTE_VPN_SUBNET}
-	handle @allowed {
-		reverse_proxy qbittorrent:8080
-	}
-
-	handle_errors {
-		@upstream_fail expression `{http.error.status_code} in [502,503,504]`
-		handle @upstream_fail {
-			respond "<h1>qBittorrent is not available at the moment</h1>" 200
-		}
-	}
-
-	respond "Forbidden" 403
-}
-
-sonarr.{$SERVER_NAME} {
-	@allowed remote_ip 192.168.8.0/24 {$VOIDROUTE_VPN_SUBNET}
-	handle @allowed {
-		reverse_proxy sonarr:8989
-	}
-
-	handle_errors {
-		@upstream_fail expression `{http.error.status_code} in [502,503,504]`
-		handle @upstream_fail {
-			respond "<h1>Sonarr is not available at the moment</h1>" 200
-		}
-	}
-
-	respond "Forbidden" 403
-}
-
-radarr.{$SERVER_NAME} {
-	@allowed remote_ip 192.168.8.0/24 {$VOIDROUTE_VPN_SUBNET}
-	handle @allowed {
-		reverse_proxy radarr:7878
-	}
-
-	handle_errors {
-		@upstream_fail expression `{http.error.status_code} in [502,503,504]`
-		handle @upstream_fail {
-			respond "<h1>Radarr is not available at the moment</h1>" 200
-		}
-	}
-
-	respond "Forbidden" 403
-}
-
-prowlarr.{$SERVER_NAME} {
-	@allowed remote_ip 192.168.8.0/24 {$VOIDROUTE_VPN_SUBNET}
-	handle @allowed {
-		reverse_proxy prowlarr:9696
-	}
-
-	handle_errors {
-		@upstream_fail expression `{http.error.status_code} in [502,503,504]`
-		handle @upstream_fail {
-			respond "<h1>Prowlarr is not available at the moment</h1>" 200
-		}
-	}
-
-	respond "Forbidden" 403
-}
-
-bazarr.{$SERVER_NAME} {
-	@allowed remote_ip 192.168.8.0/24 {$VOIDROUTE_VPN_SUBNET}
-	handle @allowed {
-		reverse_proxy bazarr:6767
-	}
-
-	handle_errors {
-		@upstream_fail expression `{http.error.status_code} in [502,503,504]`
-		handle @upstream_fail {
-			respond "<h1>Bazarr is not available at the moment</h1>" 200
-		}
-	}
-
-	respond "Forbidden" 403
-}
-
-jellyseerr.{$SERVER_NAME} {
-	@allowed remote_ip 192.168.8.0/24 {$VOIDROUTE_VPN_SUBNET}
-	handle @allowed {
-		reverse_proxy jellyseerr:5055
-	}
-
-	handle_errors {
-		@upstream_fail expression `{http.error.status_code} in [502,503,504]`
-		handle @upstream_fail {
-			respond "<h1>Jellyseerr is not available at the moment</h1>" 200
-		}
-	}
-
-	respond "Forbidden" 403
 }

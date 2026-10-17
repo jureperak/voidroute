@@ -1,6 +1,8 @@
 services:
   caddy:
-    image: caddy:2
+    # caddy:2 + Porkbun DNS plugin (see caddy/Dockerfile)
+    build: ./caddy
+    image: voidroute-caddy:latest
     container_name: caddy
     restart: unless-stopped
     ports:
@@ -13,10 +15,13 @@ services:
     environment:
       - SERVER_NAME=${SERVER_NAME}
       - VOIDROUTE_VPN_SUBNET=${VOIDROUTE_VPN_SUBNET}
+    # PORKBUN_API_KEY / PORKBUN_API_SECRET_KEY, written by the deploy workflow (mode 600)
+    env_file:
+      - ${SERVER_BASE_PATH}/caddy/caddy.env
     networks:
       voidroute:
-      homepage-internal:
-        ipv4_address: 172.30.255.2
+      homepage-mgmt:
+        ipv4_address: 172.30.254.2
 
   homepage:
     image: ghcr.io/gethomepage/homepage:latest
@@ -31,9 +36,9 @@ services:
       - dockerproxy
     networks:
       - voidroute
-      - homepage-internal
+      - homepage-mgmt
 
-  # Read-only Docker API for Homepage container status; only reachable from homepage-internal
+  # Read-only Docker API for Homepage container status; only reachable from homepage-mgmt
   dockerproxy:
     image: tecnativa/docker-socket-proxy:v0.5.0
     container_name: dockerproxy
@@ -44,7 +49,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:
-      - homepage-internal
+      - homepage-mgmt
 
   # Full Docker access by design (it is a Docker management UI); reachable only via Caddy
   portainer:
@@ -171,8 +176,10 @@ networks:
   voidroute:
     external: true
     name: ${DOCKER_NETWORK}
-  homepage-internal:
+  homepage-mgmt:
     internal: true
     ipam:
       config:
-        - subnet: 172.30.255.0/29
+        - subnet: 172.30.254.0/28
+          # Dynamic IPs come only from .8-.15 so caddy's static .2 is never handed out first
+          ip_range: 172.30.254.8/29
