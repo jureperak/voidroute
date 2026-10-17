@@ -1,6 +1,6 @@
 {
-	# Admin API is reachable only on the homepage-internal network (see docker-compose.yml)
-	admin 172.30.255.2:2019
+	# Admin API is reachable only on the homepage-mgmt network (see docker-compose.yml)
+	admin 172.30.254.2:2019
 }
 
 homepage.{$SERVER_NAME} {
