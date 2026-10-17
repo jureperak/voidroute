@@ -29,7 +29,7 @@ There is no application source code, build system, or test suite — this is pur
 
 ## Architecture
 
-**Caddy** handles TLS, subdomain routing, and IP-based access control (local network 192.168.8.0/24 + VPN subnet). All services run on a shared `voidroute` Docker network, with only Caddy exposed on ports 80/443. PostgreSQL joins the same network and publishes 5432 on `127.0.0.1` only.
+**Caddy** handles TLS, subdomain routing, and IP-based access control (local network 192.168.8.0/24 + VPN subnet). DNS is split-brain: AdGuard Home rewrites `*.${SERVER_NAME}` to the server's LAN IP, and remote access is via VPN only. Caddy serves a single `*.${SERVER_NAME}` site with one wildcard certificate obtained via Let's Encrypt DNS-01 against Porkbun, so ports 80/443 do not need to be reachable from the internet. Caddy is built from `infra/caddy/Dockerfile` (`caddy:2` + `caddy-dns/porkbun`); the Porkbun keys (`PORKBUN_API_KEY`, `PORKBUN_API_SECRET_KEY` secrets) are written by the deploy to `${SERVER_BASE_PATH}/caddy/caddy.env`. To add a service, add one `import service <subdomain> <upstream>` line to the Caddyfile. All services run on a shared `voidroute` Docker network, with only Caddy exposed on ports 80/443. PostgreSQL joins the same network and publishes 5432 on `127.0.0.1` only.
 
 A separate `homepage-mgmt` network (internal, `172.30.254.0/28`, dynamic IPs limited to `.8-.15`) connects Homepage, Caddy and `dockerproxy`. Caddy's admin API binds only to its static IP there (`172.30.254.2:2019`), and Homepage reaches Docker via `dockerproxy:2375` (containers read-only) instead of mounting `docker.sock`.
 
@@ -64,4 +64,5 @@ Ubuntu Server 26.04 LTS. Docker Engine + compose plugin from Docker's apt repo (
 - Configuration templates live under `infra/` and use the `.template` extension
 - All container names and subdomains are hardcoded (no codename variables)
 - Access control is enforced at the Caddy layer with graceful error handling for 502/503/504
+- No service except Caddy publishes host ports; everything else is reached via the Docker network
 - GitHub variables (8): `SERVER_NAME`, `SERVER_BASE_PATH`, `DOCKER_NETWORK`, `MEDIA_ROOT`, `TZ`, `PUID`, `PGID`, `VOIDROUTE_VPN_SUBNET`
