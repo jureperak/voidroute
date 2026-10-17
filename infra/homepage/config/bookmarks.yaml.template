@@ -3,6 +3,8 @@
         - href: https://adguard.${SERVER_NAME}
     - Router:
         - href: http://192.168.8.1
+    - Portainer:
+        - href: https://portainer.${SERVER_NAME}
     - Jellyfin:
         - href: https://jellyfin.${SERVER_NAME}
     - qBittorrent:

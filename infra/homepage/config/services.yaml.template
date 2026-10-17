@@ -21,18 +21,6 @@
               params:
                 unmonitored: true
 
-- Finance:
-    - Firefly III:
-        icon: firefly-iii.png
-        href: https://firefly.${SERVER_NAME}
-        description: Personal finance
-        server: my-docker
-        container: firefly
-        widget:
-          type: firefly
-          url: http://firefly:8080
-          key: ${FIREFLY_API_KEY}
-
 - Infra:
     - Caddy:
         icon: caddy.png
@@ -41,7 +29,14 @@
         container: caddy
         widget:
           type: caddy
-          url: http://caddy:2019
+          url: http://172.30.255.2:2019
+
+    - Portainer:
+        icon: portainer.png
+        href: https://portainer.${SERVER_NAME}
+        description: Docker management
+        server: my-docker
+        container: portainer
 
 - Media:
     - Jellyfin:
