@@ -1,6 +1,8 @@
 services:
   caddy:
-    image: caddy:2
+    # caddy:2 + Porkbun DNS plugin (see caddy/Dockerfile)
+    build: ./caddy
+    image: voidroute-caddy:latest
     container_name: caddy
     restart: unless-stopped
     ports:
@@ -13,6 +15,9 @@ services:
     environment:
       - SERVER_NAME=${SERVER_NAME}
       - VOIDROUTE_VPN_SUBNET=${VOIDROUTE_VPN_SUBNET}
+    # PORKBUN_API_KEY / PORKBUN_API_SECRET_KEY, written by the deploy workflow (mode 600)
+    env_file:
+      - ${SERVER_BASE_PATH}/caddy/caddy.env
     networks:
       voidroute:
       homepage-mgmt:

@@ -43,6 +43,20 @@ jobs:
       - name: Write .env
         uses: ./.github/actions/write-env
 
+      - name: Write Caddy secrets
+        env:
+          PORKBUN_API_KEY: ${{ secrets.PORKBUN_API_KEY }}
+          PORKBUN_API_SECRET_KEY: ${{ secrets.PORKBUN_API_SECRET_KEY }}
+        run: |
+          set -euo pipefail
+          for var in PORKBUN_API_KEY PORKBUN_API_SECRET_KEY; do
+            [ -n "${!var:-}" ] || { echo "::error::secret $var is not set"; exit 1; }
+          done
+          mkdir -p "$SERVER_BASE_PATH/caddy"
+          umask 077
+          printf 'PORKBUN_API_KEY=%s\nPORKBUN_API_SECRET_KEY=%s\n' "$PORKBUN_API_KEY" "$PORKBUN_API_SECRET_KEY" > "$SERVER_BASE_PATH/caddy/caddy.env"
+          chmod 600 "$SERVER_BASE_PATH/caddy/caddy.env"
+
       - name: Ensure docker network exists
         run: |
           docker network inspect "$DOCKER_NETWORK" >/dev/null 2>&1 || \
@@ -71,7 +85,8 @@ jobs:
       - name: Deploy stack
         run: |
           cd infra
-          docker compose --env-file "$ENV_FILE" pull
+          docker compose --env-file "$ENV_FILE" pull --ignore-buildable
+          docker compose --env-file "$ENV_FILE" build --pull caddy
           docker compose --env-file "$ENV_FILE" up -d --force-recreate --remove-orphans
 
           docker image prune -f
