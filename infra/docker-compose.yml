@@ -61,6 +61,10 @@ services:
     image: lscr.io/linuxserver/jellyfin
     container_name: jellyfin
     restart: unless-stopped
+    # Intel QuickSync (HD 630). The linuxserver image detects the GID owning
+    # /dev/dri/renderD128 at startup and adds its user to it, so no group_add needed.
+    devices:
+      - /dev/dri:/dev/dri
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
