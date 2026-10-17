@@ -31,7 +31,7 @@ There is no application source code, build system, or test suite — this is pur
 
 **Caddy** handles TLS, subdomain routing, and IP-based access control (local network 192.168.8.0/24 + VPN subnet). All services run on a shared `voidroute` Docker network, with only Caddy exposed on ports 80/443. PostgreSQL joins the same network and publishes 5432 on `127.0.0.1` only.
 
-A separate `homepage-internal` network (internal, `172.30.255.0/29`) connects Homepage, Caddy and `dockerproxy`. Caddy's admin API binds only to its static IP there (`172.30.255.2:2019`), and Homepage reaches Docker via `dockerproxy:2375` (containers read-only) instead of mounting `docker.sock`.
+A separate `homepage-mgmt` network (internal, `172.30.254.0/28`, dynamic IPs limited to `.8-.15`) connects Homepage, Caddy and `dockerproxy`. Caddy's admin API binds only to its static IP there (`172.30.254.2:2019`), and Homepage reaches Docker via `dockerproxy:2375` (containers read-only) instead of mounting `docker.sock`.
 
 **Folder layout** follows TRaSH Guides conventions:
 ```
