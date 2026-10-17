@@ -14,7 +14,9 @@ services:
       - SERVER_NAME=${SERVER_NAME}
       - VOIDROUTE_VPN_SUBNET=${VOIDROUTE_VPN_SUBNET}
     networks:
-      - voidroute
+      voidroute:
+      homepage-internal:
+        ipv4_address: 172.30.255.2
 
   homepage:
     image: ghcr.io/gethomepage/homepage:latest
@@ -22,10 +24,36 @@ services:
     restart: unless-stopped
     volumes:
       - ${SERVER_BASE_PATH}/homepage/config:/app/config
-      - /var/run/docker.sock:/var/run/docker.sock:ro
       - ${SERVER_BASE_PATH}/homepage/images:/app/public/images
     environment:
       HOMEPAGE_ALLOWED_HOSTS: homepage.${SERVER_NAME}
+    depends_on:
+      - dockerproxy
+    networks:
+      - voidroute
+      - homepage-internal
+
+  # Read-only Docker API for Homepage container status; only reachable from homepage-internal
+  dockerproxy:
+    image: tecnativa/docker-socket-proxy:v0.5.0
+    container_name: dockerproxy
+    restart: unless-stopped
+    environment:
+      - CONTAINERS=1
+      - POST=0
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - homepage-internal
+
+  # Full Docker access by design (it is a Docker management UI); reachable only via Caddy
+  portainer:
+    image: portainer/portainer-ce:lts
+    container_name: portainer
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${SERVER_BASE_PATH}/portainer/data:/data
     networks:
       - voidroute
 
@@ -39,8 +67,8 @@ services:
       - TZ=${TZ}
     volumes:
       - ${MEDIA_ROOT}/config/jellyfin:/config
-      - ${MEDIA_ROOT}/media/movies:/media/movies
-      - ${MEDIA_ROOT}/media/series:/media/series
+      - ${MEDIA_ROOT}/data/media/movies:/media/movies
+      - ${MEDIA_ROOT}/data/media/series:/media/series
     networks:
       - voidroute
 
@@ -55,7 +83,8 @@ services:
       - WEBUI_PORT=8080
     volumes:
       - ${MEDIA_ROOT}/config/qbittorrent:/config
-      - ${MEDIA_ROOT}/downloads:/downloads
+      # Single /data mount shared with sonarr/radarr so imports can hardlink instead of copy
+      - ${MEDIA_ROOT}/data:/data
     networks:
       - voidroute
 
@@ -69,8 +98,7 @@ services:
       - TZ=${TZ}
     volumes:
       - ${MEDIA_ROOT}/config/sonarr:/config
-      - ${MEDIA_ROOT}/media:/media
-      - ${MEDIA_ROOT}/downloads:/downloads
+      - ${MEDIA_ROOT}/data:/data
     networks:
       - voidroute
 
@@ -84,8 +112,7 @@ services:
       - TZ=${TZ}
     volumes:
       - ${MEDIA_ROOT}/config/radarr:/config
-      - ${MEDIA_ROOT}/media:/media
-      - ${MEDIA_ROOT}/downloads:/downloads
+      - ${MEDIA_ROOT}/data:/data
     networks:
       - voidroute
 
@@ -112,7 +139,7 @@ services:
       - TZ=${TZ}
     volumes:
       - ${MEDIA_ROOT}/config/bazarr:/config
-      - ${MEDIA_ROOT}/media:/media
+      - ${MEDIA_ROOT}/data/media:/data/media
     networks:
       - voidroute
 
@@ -136,27 +163,12 @@ services:
     networks:
       - voidroute
 
-  firefly:
-    image: fireflyiii/core:latest
-    container_name: firefly
-    restart: unless-stopped
-    environment:
-      - APP_KEY=${FIREFLY_APP_KEY}
-      - DB_CONNECTION=pgsql
-      - DB_HOST=192.168.8.66
-      - DB_PORT=5432
-      - DB_DATABASE=firefly
-      - DB_USERNAME=firefly
-      - DB_PASSWORD=${FIREFLY_DB_PASSWORD}
-      - APP_URL=https://firefly.${SERVER_NAME}
-      - TRUSTED_PROXIES=**
-      - TZ=${TZ}
-    volumes:
-      - ${SERVER_BASE_PATH}/firefly/upload:/var/www/html/storage/upload
-    networks:
-      - voidroute
-
 networks:
   voidroute:
     external: true
     name: ${DOCKER_NETWORK}
+  homepage-internal:
+    internal: true
+    ipam:
+      config:
+        - subnet: 172.30.255.0/29

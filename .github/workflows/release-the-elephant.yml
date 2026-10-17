@@ -12,6 +12,13 @@ jobs:
       - name: Ensure postgres volume exists
         run: docker volume inspect pg_data >/dev/null 2>&1 || docker volume create pg_data
 
+      - name: Ensure docker network exists
+        env:
+          DOCKER_NETWORK: ${{ vars.DOCKER_NETWORK }}
+        run: |
+          docker network inspect "$DOCKER_NETWORK" >/dev/null 2>&1 || \
+          docker network create "$DOCKER_NETWORK"
+
       - name: Pull Postgres image
         run: docker pull postgres:16
 
@@ -19,12 +26,16 @@ jobs:
         run: docker rm -f postgres 2>/dev/null || true
 
       - name: Run Postgres
+        env:
+          DOCKER_NETWORK: ${{ vars.DOCKER_NETWORK }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_ADMIN_PASSWORD }}
         run: |
           docker run -d \
             --name postgres \
             --restart unless-stopped \
-            -p 5432:5432 \
-            -e POSTGRES_PASSWORD="${{ secrets.POSTGRES_ADMIN_PASSWORD }}" \
+            --network "$DOCKER_NETWORK" \
+            -p 127.0.0.1:5432:5432 \
+            -e POSTGRES_PASSWORD \
             -v "pg_data:/var/lib/postgresql/data" \
             postgres:16
 

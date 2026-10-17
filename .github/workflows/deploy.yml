@@ -3,10 +3,24 @@ name: Deploy
 on:
   workflow_dispatch:
   push:
+    branches:
+      - main
     paths:
       - infra/**
 
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
 env:
+  SERVER_NAME: ${{ vars.SERVER_NAME }}
+  SERVER_BASE_PATH: ${{ vars.SERVER_BASE_PATH }}
+  DOCKER_NETWORK: ${{ vars.DOCKER_NETWORK }}
+  VOIDROUTE_VPN_SUBNET: ${{ vars.VOIDROUTE_VPN_SUBNET }}
+  MEDIA_ROOT: ${{ vars.MEDIA_ROOT }}
+  TZ: ${{ vars.TZ }}
+  PUID: ${{ vars.PUID }}
+  PGID: ${{ vars.PGID }}
   ENV_FILE: ${{ vars.SERVER_BASE_PATH }}/.env
 
 jobs:
@@ -20,15 +34,14 @@ jobs:
 
       - name: Write .env
         uses: ./.github/actions/write-env
-        with:
-          SERVER_NAME: ${{ vars.SERVER_NAME }}
-          SERVER_BASE_PATH: ${{ vars.SERVER_BASE_PATH }}
-          DOCKER_NETWORK: ${{ vars.DOCKER_NETWORK }}
-          VOIDROUTE_VPN_SUBNET: ${{ vars.VOIDROUTE_VPN_SUBNET }}
-          MEDIA_ROOT: ${{ vars.MEDIA_ROOT }}
-          TZ: ${{ vars.TZ }}
-          PUID: ${{ vars.PUID }}
-          PGID: ${{ vars.PGID }}
+
+      - name: Ensure docker network exists
+        run: |
+          docker network inspect "$DOCKER_NETWORK" >/dev/null 2>&1 || \
+          docker network create "$DOCKER_NETWORK"
+
+      - name: Generate Homepage config
+        env:
           JELLYFIN_API_KEY: ${{ secrets.JELLYFIN_API_KEY }}
           QBITTORRENT_USERNAME: ${{ secrets.QBITTORRENT_USERNAME }}
           QBITTORRENT_PASSWORD: ${{ secrets.QBITTORRENT_PASSWORD }}
@@ -37,20 +50,7 @@ jobs:
           PROWLARR_API_KEY: ${{ secrets.PROWLARR_API_KEY }}
           BAZARR_API_KEY: ${{ secrets.BAZARR_API_KEY }}
           JELLYSEERR_API_KEY: ${{ secrets.JELLYSEERR_API_KEY }}
-          FIREFLY_API_KEY: ${{ secrets.FIREFLY_API_KEY }}
-          FIREFLY_APP_KEY: ${{ secrets.FIREFLY_APP_KEY }}
-          FIREFLY_DB_PASSWORD: ${{ secrets.FIREFLY_DB_PASSWORD }}
-          POSTGRES_ADMIN_PASSWORD: ${{ secrets.POSTGRES_ADMIN_PASSWORD }}
-
-      - name: Ensure docker network exists
         run: |
-          source "$ENV_FILE"
-          docker network inspect "$DOCKER_NETWORK" >/dev/null 2>&1 || \
-          docker network create "$DOCKER_NETWORK"
-
-      - name: Generate Homepage config
-        run: |
-          set -a && source "$ENV_FILE" && set +a
           mkdir -p "$SERVER_BASE_PATH/homepage/config"
 
           cp infra/homepage/config/settings.yaml "$SERVER_BASE_PATH/homepage/config/"
@@ -67,7 +67,6 @@ jobs:
           docker compose --env-file "$ENV_FILE" up -d --force-recreate --remove-orphans
 
           docker image prune -f
-          docker container prune -f
 
       - name: Status
         run: docker compose -f infra/docker-compose.yml --env-file "$ENV_FILE" ps
