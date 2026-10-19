@@ -91,6 +91,7 @@ jobs:
           SONARR_API_KEY: ${{ secrets.SONARR_API_KEY }}
           RADARR_API_KEY: ${{ secrets.RADARR_API_KEY }}
           PROWLARR_API_KEY: ${{ secrets.PROWLARR_API_KEY }}
+          BAZARR_API_KEY: ${{ secrets.BAZARR_API_KEY }}
         run: |
           set -euo pipefail
           seed_key() {
@@ -113,6 +114,19 @@ jobs:
           seed_key sonarr "$SONARR_API_KEY"
           seed_key radarr "$RADARR_API_KEY"
           seed_key prowlarr "$PROWLARR_API_KEY"
+          seed_bazarr_key() {
+            local key="$1" file="$MEDIA_ROOT/config/bazarr/config/config.yaml" current
+            [ -n "$key" ] || { echo "::error::secret for bazarr is not set"; exit 1; }
+            if [ ! -f "$file" ]; then
+              echo "::warning::bazarr config not found yet; start Bazarr once, then re-run"; return 0
+            fi
+            current=$(awk '/^auth:/{f=1;next} /^[a-z]/{f=0} f && /^  apikey:/{print $2; exit}' "$file")
+            [ "$current" = "$key" ] && { echo "bazarr: API key unchanged"; return 0; }
+            sed -i "/^auth:/,/^[a-z]/ s|^  apikey: .*|  apikey: $key|" "$file"
+            echo "bazarr: API key updated"
+            if docker ps -a --format '{{.Names}}' | grep -qx bazarr; then docker restart bazarr >/dev/null; fi
+          }
+          seed_bazarr_key "$BAZARR_API_KEY"
 
       - name: Deploy stack
         run: |
