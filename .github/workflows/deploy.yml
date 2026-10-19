@@ -137,5 +137,36 @@ jobs:
 
           docker image prune -f
 
+      - name: Link Prowlarr to Sonarr and Radarr
+        env:
+          PROWLARR_API_KEY: ${{ secrets.PROWLARR_API_KEY }}
+          SONARR_API_KEY: ${{ secrets.SONARR_API_KEY }}
+          RADARR_API_KEY: ${{ secrets.RADARR_API_KEY }}
+        run: |
+          set -euo pipefail
+          api() {
+            docker exec -i prowlarr curl -sS -f -H "X-Api-Key: $PROWLARR_API_KEY" -H 'Content-Type: application/json' "$@"
+          }
+          for _ in $(seq 60); do
+            api http://localhost:9696/api/v1/system/status >/dev/null 2>&1 && break
+            sleep 2
+          done
+          api http://localhost:9696/api/v1/system/status >/dev/null || { echo "::error::Prowlarr API is not reachable"; exit 1; }
+
+          link_app() {
+            local impl="$1" base="$2" key="$3" existing body
+            [ -n "$key" ] || { echo "::error::secret for $impl is not set"; exit 1; }
+            existing=$(api http://localhost:9696/api/v1/applications | python3 -c 'import json,sys; print(" ".join(a["name"] for a in json.load(sys.stdin)))')
+            case " $existing " in
+              *" $impl "*) echo "$impl: already linked"; return 0 ;;
+            esac
+            body=$(api http://localhost:9696/api/v1/applications/schema | python3 -c "import json,sys; impl,base,key=sys.argv[1:4]; s=next(x for x in json.load(sys.stdin) if x['implementation']==impl); v={'baseUrl':base,'prowlarrUrl':'http://prowlarr:9696','apiKey':key}; [f.__setitem__('value',v[f['name']]) for f in s['fields'] if f['name'] in v]; s.update(name=impl,enable=True,syncLevel='fullSync'); print(json.dumps(s))" "$impl" "$base" "$key")
+            printf '%s' "$body" | api -X POST http://localhost:9696/api/v1/applications -d @- >/dev/null
+            echo "$impl: linked to Prowlarr"
+          }
+
+          link_app Sonarr http://sonarr:8989 "$SONARR_API_KEY"
+          link_app Radarr http://radarr:7878 "$RADARR_API_KEY"
+
       - name: Status
         run: docker compose -f infra/docker-compose.yml --env-file "$ENV_FILE" ps
