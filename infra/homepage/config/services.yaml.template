@@ -43,6 +43,11 @@
         href: https://homepage.${SERVER_NAME}/images/architecture.svg
         description: Stack diagram
 
+    - Media flow:
+        icon: mdi-movie-open-outline
+        href: https://homepage.${SERVER_NAME}/images/media-flow.svg
+        description: How a title reaches Jellyfin
+
 - Media:
     - Jellyfin:
         icon: jellyfin.png
