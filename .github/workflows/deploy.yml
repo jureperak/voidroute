@@ -178,5 +178,11 @@ jobs:
           docker cp infra/seerr/link-arr.js jellyseerr:/tmp/link-arr.js
           docker exec -e SEERR_API_KEY -e SONARR_API_KEY -e RADARR_API_KEY jellyseerr node /tmp/link-arr.js
 
+      - name: Seed Sonarr and Radarr quality profiles
+        env:
+          SONARR_API_KEY: ${{ secrets.SONARR_API_KEY }}
+          RADARR_API_KEY: ${{ secrets.RADARR_API_KEY }}
+        run: bash infra/arr/seed-profiles.sh
+
       - name: Status
         run: docker compose -f infra/docker-compose.yml --env-file "$ENV_FILE" ps
