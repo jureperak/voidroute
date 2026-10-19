@@ -85,6 +85,38 @@ jobs:
           envsubst < infra/homepage/config/services.yaml.template > "$SERVER_BASE_PATH/homepage/config/services.yaml"
           envsubst < infra/homepage/config/bookmarks.yaml.template > "$SERVER_BASE_PATH/homepage/config/bookmarks.yaml"
 
+      - name: Seed arr API keys
+        env:
+          MEDIA_ROOT: ${{ vars.MEDIA_ROOT }}
+          SONARR_API_KEY: ${{ secrets.SONARR_API_KEY }}
+          RADARR_API_KEY: ${{ secrets.RADARR_API_KEY }}
+          PROWLARR_API_KEY: ${{ secrets.PROWLARR_API_KEY }}
+        run: |
+          set -euo pipefail
+          seed_key() {
+            local app="$1" key="$2" dir file
+            dir="$MEDIA_ROOT/config/$app"
+            file="$dir/config.xml"
+            [ -n "$key" ] || { echo "::error::secret for $app is not set"; exit 1; }
+            mkdir -p "$dir"
+            if [ ! -f "$file" ]; then
+              printf '<Config>
+  <ApiKey>%s</ApiKey>
+</Config>
+' "$key" > "$file"
+            elif grep -q '<ApiKey>' "$file"; then
+              grep -q "<ApiKey>$key</ApiKey>" "$file" && { echo "$app: API key unchanged"; return 0; }
+              sed -i "s|<ApiKey>[^<]*</ApiKey>|<ApiKey>$key</ApiKey>|" "$file"
+            else
+              echo "::error::$file has no ApiKey element"; exit 1
+            fi
+            echo "$app: API key updated"
+            if docker ps -a --format '{{.Names}}' | grep -qx "$app"; then docker restart "$app" >/dev/null; fi
+          }
+          seed_key sonarr "$SONARR_API_KEY"
+          seed_key radarr "$RADARR_API_KEY"
+          seed_key prowlarr "$PROWLARR_API_KEY"
+
       - name: Deploy stack
         run: |
           cd infra
