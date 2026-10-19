@@ -1,5 +1,6 @@
 {
 	# Admin API is reachable only on the homepage-mgmt network (see docker-compose.yml)
+	# Deploy smoke test: comment-only change to verify the new runner
 	admin 172.30.254.2:2019
 }
 
@@ -15,14 +16,10 @@
 # only ever arrives from the LAN or VPN. One wildcard cert via Porkbun DNS-01
 # means ports 80/443 never need to be reachable from the internet.
 *.{$SERVER_NAME} {
-	tls {
-		dns porkbun {
-			api_key {env.PORKBUN_API_KEY}
-			api_secret_key {env.PORKBUN_API_SECRET_KEY}
-		}
-		# Check challenge propagation against public DNS, not AdGuard's rewrites
-		resolvers 1.1.1.1 1.0.0.1
-	}
+	# TEMPORARY: Porkbun DNS-01 is failing (TXT records not served by Porkbun
+	# nameservers). Caddy's internal CA issues certs until that is fixed.
+	# Clients must trust Caddy's root CA or will see a certificate warning.
+	tls internal
 
 	@outside not remote_ip 192.168.8.0/24 {$VOIDROUTE_VPN_SUBNET}
 	handle @outside {
