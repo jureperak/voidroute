@@ -70,7 +70,7 @@
         widget:
           type: jellyseerr
           url: http://jellyseerr:5055
-          key: ${JELLYSEERR_API_KEY}
+          key: ${SEERR_API_KEY}
 
     - Sonarr:
         icon: sonarr.png

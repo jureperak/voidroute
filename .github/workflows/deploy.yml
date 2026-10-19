@@ -71,7 +71,7 @@ jobs:
           RADARR_API_KEY: ${{ secrets.RADARR_API_KEY }}
           PROWLARR_API_KEY: ${{ secrets.PROWLARR_API_KEY }}
           BAZARR_API_KEY: ${{ secrets.BAZARR_API_KEY }}
-          JELLYSEERR_API_KEY: ${{ secrets.JELLYSEERR_API_KEY }}
+          SEERR_API_KEY: ${{ secrets.SEERR_API_KEY }}
         run: |
           mkdir -p "$SERVER_BASE_PATH/homepage/config"
 
