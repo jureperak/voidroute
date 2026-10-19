@@ -12,23 +12,29 @@
   <!-- outside -->
   <rect x="40" y="70" width="160" height="60" rx="8" fill="#f1f5f9" stroke="#64748b" stroke-width="1.5"/>
   <text x="120" y="96" text-anchor="middle" font-size="14" font-weight="600" fill="#0f172a">Your device</text>
-  <text x="120" y="116" text-anchor="middle" font-size="12" fill="#475569">home LAN or remote</text>
+  <text x="120" y="116" text-anchor="middle" font-size="12" fill="#475569">home Wi-Fi or remote</text>
 
-  <rect x="260" y="70" width="200" height="60" rx="8" fill="#f1f5f9" stroke="#64748b" stroke-width="1.5"/>
-  <text x="360" y="96" text-anchor="middle" font-size="14" font-weight="600" fill="#0f172a">AdGuard Home</text>
-  <text x="360" y="116" text-anchor="middle" font-size="12" fill="#475569">LAN DNS (split-brain)</text>
+  <rect x="360" y="70" width="200" height="60" rx="8" fill="#f1f5f9" stroke="#64748b" stroke-width="1.5"/>
+  <text x="460" y="96" text-anchor="middle" font-size="14" font-weight="600" fill="#0f172a">AdGuard Home</text>
+  <text x="460" y="116" text-anchor="middle" font-size="12" fill="#475569">LAN DNS (split-brain)</text>
 
-  <rect x="500" y="70" width="200" height="60" rx="8" fill="#f1f5f9" stroke="#64748b" stroke-width="1.5"/>
-  <text x="600" y="96" text-anchor="middle" font-size="14" font-weight="600" fill="#0f172a">VPN</text>
-  <text x="600" y="116" text-anchor="middle" font-size="12" fill="#475569">remote access only</text>
+  <rect x="700" y="70" width="200" height="60" rx="8" fill="#f1f5f9" stroke="#64748b" stroke-width="1.5"/>
+  <text x="800" y="96" text-anchor="middle" font-size="14" font-weight="600" fill="#0f172a">VPN</text>
+  <text x="800" y="116" text-anchor="middle" font-size="12" fill="#475569">remote access tunnel</text>
 
-  <!-- device: DNS query to AdGuard -->
-  <line x1="200" y1="100" x2="260" y2="100" stroke="#334155" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <!-- home: device asks AdGuard directly for DNS -->
+  <line x1="200" y1="100" x2="360" y2="100" stroke="#334155" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="280" y="92" text-anchor="middle" font-size="11" fill="#475569">home: DNS</text>
+  <!-- remote: device enters the VPN tunnel, then uses AdGuard for DNS -->
+  <polyline points="120,70 120,50 780,50 800,70" fill="none" stroke="#334155" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="600" y="64" text-anchor="middle" font-size="11" fill="#475569">remote: via VPN tunnel</text>
+  <line x1="700" y1="100" x2="560" y2="100" stroke="#334155" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="630" y="92" text-anchor="middle" font-size="11" fill="#475569">remote: DNS</text>
   <!-- AdGuard rewrites *.domain to the server -->
-  <line x1="400" y1="130" x2="400" y2="195" stroke="#334155" stroke-width="1.5" marker-end="url(#arrow)"/>
-  <text x="410" y="166" font-size="11" fill="#475569">rewrites *.domain to server</text>
-  <!-- remote traffic enters through VPN -->
-  <line x1="600" y1="130" x2="600" y2="170" stroke="#334155" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="420" y1="130" x2="420" y2="195" stroke="#334155" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="430" y="166" font-size="11" fill="#475569">rewrites *.domain to server</text>
+  <!-- VPN traffic enters the LAN and reaches Caddy -->
+  <line x1="800" y1="130" x2="800" y2="170" stroke="#334155" stroke-width="1.5" marker-end="url(#arrow)"/>
 
   <!-- voidroute network -->
   <rect x="40" y="160" width="880" height="280" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
