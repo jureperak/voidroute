@@ -100,10 +100,7 @@ jobs:
             [ -n "$key" ] || { echo "::error::secret for $app is not set"; exit 1; }
             mkdir -p "$dir"
             if [ ! -f "$file" ]; then
-              printf '<Config>
-  <ApiKey>%s</ApiKey>
-</Config>
-' "$key" > "$file"
+              printf '<Config>\n  <ApiKey>%s</ApiKey>\n</Config>\n' "$key" > "$file"
             elif grep -q '<ApiKey>' "$file"; then
               grep -q "<ApiKey>$key</ApiKey>" "$file" && { echo "$app: API key unchanged"; return 0; }
               sed -i "s|<ApiKey>[^<]*</ApiKey>|<ApiKey>$key</ApiKey>|" "$file"
