@@ -192,5 +192,16 @@ jobs:
           QBITTORRENT_PASSWORD: ${{ secrets.QBITTORRENT_PASSWORD }}
         run: bash infra/arr/seed-download-clients.sh
 
+      - name: Set Sonarr and Radarr media settings
+        env:
+          SONARR_API_KEY: ${{ secrets.SONARR_API_KEY }}
+          RADARR_API_KEY: ${{ secrets.RADARR_API_KEY }}
+        run: bash infra/arr/seed-media-settings.sh
+
+      - name: Create Jellyfin libraries
+        env:
+          JELLYFIN_API_KEY: ${{ secrets.JELLYFIN_API_KEY }}
+        run: bash infra/jellyfin/seed-libraries.sh
+
       - name: Status
         run: docker compose -f infra/docker-compose.yml --env-file "$ENV_FILE" ps
