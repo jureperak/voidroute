@@ -38,6 +38,11 @@
         server: my-docker
         container: portainer
 
+    - Architecture:
+        icon: mdi-sitemap-outline
+        href: https://homepage.${SERVER_NAME}/images/architecture.svg
+        description: Stack diagram
+
 - Media:
     - Jellyfin:
         icon: jellyfin.png
