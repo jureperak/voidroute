@@ -79,6 +79,9 @@ jobs:
           cp infra/homepage/config/docker.yaml "$SERVER_BASE_PATH/homepage/config/"
           cp infra/homepage/config/widgets.yaml "$SERVER_BASE_PATH/homepage/config/"
 
+          mkdir -p "$SERVER_BASE_PATH/homepage/images"
+          cp infra/homepage/images/architecture.svg "$SERVER_BASE_PATH/homepage/images/"
+
           envsubst < infra/homepage/config/services.yaml.template > "$SERVER_BASE_PATH/homepage/config/services.yaml"
           envsubst < infra/homepage/config/bookmarks.yaml.template > "$SERVER_BASE_PATH/homepage/config/bookmarks.yaml"
 
