@@ -168,5 +168,15 @@ jobs:
           link_app Sonarr http://sonarr:8989 "$SONARR_API_KEY"
           link_app Radarr http://radarr:7878 "$RADARR_API_KEY"
 
+      - name: Link Seerr to Sonarr and Radarr
+        env:
+          SEERR_API_KEY: ${{ secrets.SEERR_API_KEY }}
+          SONARR_API_KEY: ${{ secrets.SONARR_API_KEY }}
+          RADARR_API_KEY: ${{ secrets.RADARR_API_KEY }}
+        run: |
+          set -euo pipefail
+          docker cp infra/seerr/link-arr.js jellyseerr:/tmp/link-arr.js
+          docker exec -e SEERR_API_KEY -e SONARR_API_KEY -e RADARR_API_KEY jellyseerr node /tmp/link-arr.js
+
       - name: Status
         run: docker compose -f infra/docker-compose.yml --env-file "$ENV_FILE" ps
