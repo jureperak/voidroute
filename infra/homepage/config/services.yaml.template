@@ -55,6 +55,11 @@
         description: Movies and TV
         server: my-docker
         container: jellyfin
+        widget:
+          type: jellyfin
+          url: http://jellyfin:8096
+          key: ${JELLYFIN_API_KEY}
+          version: 2
 
     - Jellyseerr:
         icon: jellyseerr.png
