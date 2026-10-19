@@ -1,5 +1,6 @@
 {
 	# Admin API is reachable only on the homepage-mgmt network (see docker-compose.yml)
+	# Deploy smoke test: comment-only change to verify the new runner
 	admin 172.30.254.2:2019
 }
 
