@@ -22,6 +22,9 @@
 		}
 		# Check challenge propagation against public DNS, not AdGuard's rewrites
 		resolvers 1.1.1.1 1.0.0.1
+		# Let Let's Encrypt validate the record directly; Caddy's own check gets stale
+		# negative answers from its resolver (see CLAUDE.md, Known gaps)
+		propagation_timeout -1
 	}
 
 	@outside not remote_ip 192.168.8.0/24 {$VOIDROUTE_VPN_SUBNET}
