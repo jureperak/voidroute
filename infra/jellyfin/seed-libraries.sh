@@ -35,5 +35,12 @@ add_library() {
   echo "jellyfin: created library '$name'"
 }
 
+# Jellyfin is recreated by the deploy and can take a while to start serving the API.
+for _ in $(seq 60); do
+  get /System/Info/Public >/dev/null 2>&1 && break
+  sleep 2
+done
+get /System/Info/Public >/dev/null || { echo "::error::Jellyfin API is not reachable"; exit 1; }
+
 add_library Movies movies /media/movies
 add_library Shows tvshows /media/series
