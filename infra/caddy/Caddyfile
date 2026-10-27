@@ -24,6 +24,8 @@
 		resolvers 1.1.1.1 1.0.0.1
 		# Let Let's Encrypt validate the record directly; Caddy's own check gets stale
 		# negative answers from its resolver (see CLAUDE.md, Known gaps)
+		# Porkbun publishes new TXT records with a delay; give it time before Let's Encrypt checks
+		propagation_delay 120s
 		propagation_timeout -1
 	}
 
