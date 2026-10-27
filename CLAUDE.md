@@ -31,7 +31,7 @@ There is no application source code, build system, or test suite — this is pur
 
 **Caddy** handles TLS, subdomain routing, and IP-based access control (local network 192.168.8.0/24 + VPN subnet). DNS is split-brain: AdGuard Home rewrites `*.${SERVER_NAME}` to the server's LAN IP, and remote access is via VPN only. Caddy serves a single `*.${SERVER_NAME}` site. Its intended certificate is one wildcard from Let's Encrypt via DNS-01 against Porkbun, so ports 80/443 do not need to be reachable from the internet. Caddy is built from `infra/caddy/Dockerfile` (`caddy:2` + `caddy-dns/porkbun`); the Porkbun keys (`PORKBUN_API_KEY`, `PORKBUN_API_SECRET_KEY` secrets) are written by the deploy to `${SERVER_BASE_PATH}/caddy/caddy.env`. To add a service, add one `import service <subdomain> <upstream>` line to the Caddyfile. All services run on a shared `voidroute` Docker network, with only Caddy exposed on ports 80/443. PostgreSQL joins the same network and publishes 5432 on `127.0.0.1` only.
 
-**Current state:** the Caddyfile uses `tls internal` as a temporary workaround, because Porkbun TXT records are not visible to public resolvers during the ACME challenge (support ticket open). Browsers must trust Caddy's root CA, which is exported with `docker cp caddy:/data/caddy/pki/authorities/local/root.crt`. Switch back to the Porkbun `tls { dns porkbun … }` block (see commit `c060c40`) once the challenge succeeds.
+**Current state:** Caddy gets a real wildcard certificate via DNS-01 against Porkbun. Two settings make it work: `propagation_delay 120s` (Porkbun publishes new TXT records with a delay) and `propagation_timeout -1` (Caddy skips its own check, because its resolver caches stale "no record" answers for up to 30 minutes, and Let's Encrypt validates directly). The split-brain DNS needs per-service AdGuard rewrites (`homepage.*`, `jellyfin.*`, ...), not a wildcard, because a wildcard rewrite answers `_acme-challenge` TXT queries itself. Devices must use AdGuard for DNS to resolve these names; the public DNS records for `voidroute.dev` were removed.
 
 A separate `homepage-mgmt` network (internal, `172.30.254.0/28`, dynamic IPs limited to `.8-.15`) connects Homepage, Caddy and `dockerproxy`. Caddy's admin API binds only to its static IP there (`172.30.254.2:2019`), and Homepage reaches Docker via `dockerproxy:2375` (containers read-only) instead of mounting `docker.sock`.
 
@@ -88,7 +88,7 @@ There are no local build or deploy commands — everything runs through GitHub A
 ## Bootstrapping from zero
 
 1. **Host:** Ubuntu Server 26.04 LTS, Docker Engine + compose plugin, `git`, and `gettext-base`. Install the self-hosted runner as a systemd service under your user (`sudo ./svc.sh install <user>`), in the `docker` group, with the default `self-hosted` label. Create the folders from the layout above, owned by your user (`id -u` / `id -g` should match `PUID` / `PGID`).
-2. **Porkbun:** enable API access for `voidroute.dev` (Opt In All Domains), and create an API key with DNS permission only. Until the TXT issue is fixed, Caddy uses `tls internal` (see Architecture).
+2. **Porkbun:** enable API access for `voidroute.dev` (Opt In All Domains), and create an API key with DNS permission only. Caddy's DNS-01 settings are in the `tls` block (see Current state). Remove the public `*` CNAME and apex ALIAS for `voidroute.dev`, and create the per-service AdGuard rewrites instead.
 3. **GitHub:** set the 8 variables and the secrets above, except `JELLYFIN_API_KEY` and `SEERR_API_KEY`. Generate the arr keys with `openssl rand -hex 16`.
 4. **First deploy:** run Deploy manually from `main`. Its early steps skip the apps that don't exist yet, and check the log for warnings.
 5. **Apps' first start:** complete each app's first-run setup:
@@ -102,7 +102,7 @@ There are no local build or deploy commands — everything runs through GitHub A
 
 ## Known gaps
 
-- **Porkbun TXT records:** the DNS-01 challenge times out because `_acme-challenge` records aren't served to public resolvers. Open support ticket. Current workaround is the internal CA (see Architecture).
+- **Porkbun TXT publication:** new TXT records take time to appear, and records can disappear when a challenge fails. Support ticket open. The propagation settings above work around it.
 - **Bazarr profile and Prowlarr indexers:** manual, see Automated configuration.
 - **Backup:** not yet running. Waiting for the NAS.
 - **Seerr:** pinned to `v3.5.0`. Check the release notes before each bump.
