@@ -38,6 +38,13 @@
         server: my-docker
         container: portainer
 
+    - Vaultwarden:
+        icon: bitwarden.png
+        href: https://vault.${SERVER_NAME}
+        description: Passwords
+        server: my-docker
+        container: vaultwarden
+
     - Architecture:
         icon: mdi-sitemap-outline
         href: https://homepage.${SERVER_NAME}/images/architecture.svg
