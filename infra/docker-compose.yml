@@ -60,7 +60,7 @@ services:
       - ${SERVER_BASE_PATH}/vaultwarden/vaultwarden.env
     environment:
       - DOMAIN=https://vault.${SERVER_NAME}
-      - SIGNUPS_ALLOWED=false
+      - SIGNUPS_ALLOWED=true  # TEMPORARY: set back to false after creating the first account
     volumes:
       - ${SERVER_BASE_PATH}/vaultwarden/data:/data
     networks:
