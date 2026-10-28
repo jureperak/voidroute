@@ -52,6 +52,20 @@ services:
       - homepage-mgmt
 
   # Full Docker access by design (it is a Docker management UI); reachable only via Caddy
+  vaultwarden:
+    image: vaultwarden/server:1.37.4
+    container_name: vaultwarden
+    restart: unless-stopped
+    env_file:
+      - ${SERVER_BASE_PATH}/vaultwarden/vaultwarden.env
+    environment:
+      - DOMAIN=https://vault.${SERVER_NAME}
+      - SIGNUPS_ALLOWED=false
+    volumes:
+      - ${SERVER_BASE_PATH}/vaultwarden/data:/data
+    networks:
+      - voidroute
+
   portainer:
     image: portainer/portainer-ce:lts
     container_name: portainer

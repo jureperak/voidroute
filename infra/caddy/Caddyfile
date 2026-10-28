@@ -37,6 +37,7 @@
 	import service homepage homepage:3000
 	import service adguard 192.168.8.1:3000
 	import service portainer portainer:9000
+	import service vault vaultwarden:80
 	import service jellyfin jellyfin:8096
 	import service jellyseerr jellyseerr:5055
 	import service qbittorrent qbittorrent:8080

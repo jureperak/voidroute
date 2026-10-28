@@ -21,6 +21,7 @@ There is no application source code, build system, or test suite — this is pur
 | Prowlarr | Indexer management | prowlarr.* |
 | Bazarr | Subtitle management | bazarr.* |
 | Seerr | Request/discovery UI (successor to Jellyseerr, image `ghcr.io/seerr-team/seerr`, pinned to `v3.5.0`) | jellyseerr.* |
+| Vaultwarden | Password manager (Bitwarden-compatible server, image `vaultwarden/server:1.37.4`) | vault.* |
 | Flaresolverr | Cloudflare solver for Prowlarr | (internal only) |
 | Portainer | Docker management UI | portainer.* |
 | Docker socket proxy | Read-only Docker API for Homepage | (internal only) |
@@ -68,9 +69,13 @@ Use the app's own field names: they're in each app's source (`MediaManagementCon
 
 ## Secrets and variables
 
-GitHub **secrets**: `PORKBUN_API_KEY`, `PORKBUN_API_SECRET_KEY`, `JELLYFIN_API_KEY`, `SEERR_API_KEY`, `SONARR_API_KEY`, `RADARR_API_KEY`, `PROWLARR_API_KEY`, `BAZARR_API_KEY`, `QBITTORRENT_USERNAME`, `QBITTORRENT_PASSWORD`.
+GitHub **secrets**: `VAULTWARDEN_ADMIN_TOKEN`, `PORKBUN_API_KEY`, `PORKBUN_API_SECRET_KEY`, `JELLYFIN_API_KEY`, `SEERR_API_KEY`, `SONARR_API_KEY`, `RADARR_API_KEY`, `PROWLARR_API_KEY`, `BAZARR_API_KEY`, `QBITTORRENT_USERNAME`, `QBITTORRENT_PASSWORD`.
 
 The arr keys can be any 32-character hex string, generated with `openssl rand -hex 16`. The deploy writes them into each app. `SEERR_API_KEY` and `JELLYFIN_API_KEY` are created inside those apps, after their first start.
+
+`VAULTWARDEN_ADMIN_TOKEN` is the Vaultwarden admin page password. Generate it with `openssl rand -base64 48`.
+
+**Vaultwarden:** after the first deploy, create your account at `https://vault.<domain>` (signups are off after that), turn on two-factor authentication, and add `vault.<domain>` as a per-service AdGuard rewrite like the other services. Clients (Bitwarden apps on Android, iOS and desktop) need the server URL set to `https://vault.<domain>`. Back up the master password and two-factor recovery codes outside the server: there is no recovery for the vault without them.
 
 ## Backup
 
