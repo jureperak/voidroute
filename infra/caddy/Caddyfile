@@ -40,6 +40,7 @@
 	import service vault vaultwarden:80
 	import service gym gym-web:80
 	import service planner vikunja:3456
+	import service speed speedtest:80
 	import service jellyfin jellyfin:8096
 	import service jellyseerr jellyseerr:5055
 	import service qbittorrent qbittorrent:8080
