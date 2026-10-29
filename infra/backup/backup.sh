@@ -39,6 +39,7 @@ restic backup \
   "$SERVER_BASE_PATH/portainer/data" \
   "$VW_DIR" \
   "$SERVER_BASE_PATH/opengym/data" \
+  "$SERVER_BASE_PATH/vikunja" \
   "$STAGE"
 
 restic forget --tag voidroute-config --keep-daily 7 --keep-weekly 4 --prune
