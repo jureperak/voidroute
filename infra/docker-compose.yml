@@ -74,7 +74,7 @@ services:
       - RP_ID=gym.${SERVER_NAME}
       - ORIGIN=https://gym.${SERVER_NAME}
       - FIRST_USER_ADMIN=1
-      # TEMPORARY: INVITE_ONLY=1 is re-enabled after the first profile exists
+      - INVITE_ONLY=1
       - TRUST_PROXY=1
       - DATA_DIR=/data
     volumes:
