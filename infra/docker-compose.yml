@@ -66,6 +66,34 @@ services:
     networks:
       - voidroute
 
+  gym-api:
+    image: ghcr.io/duartesantos8/opengym-api:1.4.3
+    container_name: gym-api
+    restart: unless-stopped
+    environment:
+      - RP_ID=gym.${SERVER_NAME}
+      - ORIGIN=https://gym.${SERVER_NAME}
+      - FIRST_USER_ADMIN=1
+      - INVITE_ONLY=1
+      - TRUST_PROXY=1
+      - DATA_DIR=/data
+    volumes:
+      - ${SERVER_BASE_PATH}/opengym/data:/data
+    networks:
+      - voidroute
+
+  gym-web:
+    image: ghcr.io/duartesantos8/opengym-web:1.4.3
+    container_name: gym-web
+    restart: unless-stopped
+    depends_on:
+      - gym-api
+    environment:
+      - BACKEND=gym-api
+      - PORT=3000
+    networks:
+      - voidroute
+
   portainer:
     image: portainer/portainer-ce:lts
     container_name: portainer

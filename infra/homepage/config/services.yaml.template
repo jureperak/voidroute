@@ -45,6 +45,13 @@
         server: my-docker
         container: vaultwarden
 
+    - Gym:
+        icon: mdi-dumbbell
+        href: https://gym.${SERVER_NAME}
+        description: Workouts
+        server: my-docker
+        container: gym-web
+
     - Architecture:
         icon: mdi-sitemap-outline
         href: https://homepage.${SERVER_NAME}/images/architecture.svg
