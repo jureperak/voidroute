@@ -82,6 +82,16 @@ jobs:
           printf 'VIKUNJA_SERVICE_JWTSECRET=%s\n' "$VIKUNJA_JWT_SECRET" > "$SERVER_BASE_PATH/vikunja/vikunja.env"
           chmod 600 "$SERVER_BASE_PATH/vikunja/vikunja.env"
 
+      - name: Write Speedtest Tracker env
+        env:
+          SPEEDTEST_APP_KEY: ${{ secrets.SPEEDTEST_APP_KEY }}
+        run: |
+          set -euo pipefail
+          [ -n "$SPEEDTEST_APP_KEY" ] || { echo "::error::secret SPEEDTEST_APP_KEY is not set"; exit 1; }
+          mkdir -p "$SERVER_BASE_PATH/speedtest/config"
+          umask 077
+          printf 'APP_KEY=%s\n' "$SPEEDTEST_APP_KEY" > "$SERVER_BASE_PATH/speedtest/speedtest.env"
+          chmod 600 "$SERVER_BASE_PATH/speedtest/speedtest.env"
       - name: Ensure docker network exists
         run: |
           docker network inspect "$DOCKER_NETWORK" >/dev/null 2>&1 || \

@@ -59,6 +59,15 @@
         server: my-docker
         container: vikunja
 
+    - Internet speed:
+        icon: mdi-speedometer
+        description: Speed history
+        widget:
+          type: iframe
+          src: https://speed.${SERVER_NAME}
+          classes: h-96 w-full
+
+
     - Architecture:
         icon: mdi-sitemap-outline
         href: https://homepage.${SERVER_NAME}/images/architecture.svg

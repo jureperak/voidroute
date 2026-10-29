@@ -40,6 +40,7 @@ restic backup \
   "$VW_DIR" \
   "$SERVER_BASE_PATH/opengym/data" \
   "$SERVER_BASE_PATH/vikunja" \
+  "$SERVER_BASE_PATH/speedtest/config" \
   "$STAGE"
 
 restic forget --tag voidroute-config --keep-daily 7 --keep-weekly 4 --prune

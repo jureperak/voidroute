@@ -111,6 +111,24 @@ services:
     networks:
       - voidroute
 
+  speedtest:
+    image: lscr.io/linuxserver/speedtest-tracker
+    container_name: speedtest
+    restart: unless-stopped
+    env_file:
+      - ${SERVER_BASE_PATH}/speedtest/speedtest.env
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - APP_URL=https://speed.${SERVER_NAME}
+      - DB_CONNECTION=sqlite
+      - SPEEDTEST_SCHEDULE=*/10 * * * *
+    volumes:
+      - ${SERVER_BASE_PATH}/speedtest/config:/config
+    networks:
+      - voidroute
+
   portainer:
     image: portainer/portainer-ce:lts
     container_name: portainer
