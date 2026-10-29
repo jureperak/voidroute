@@ -94,6 +94,23 @@ services:
     networks:
       - voidroute
 
+  vikunja:
+    image: vikunja/vikunja:2.7.1
+    container_name: vikunja
+    restart: unless-stopped
+    env_file:
+      - ${SERVER_BASE_PATH}/vikunja/vikunja.env
+    environment:
+      - VIKUNJA_SERVICE_PUBLICURL=https://planner.${SERVER_NAME}
+      # TEMPORARY: true only to create the first account, then set back to false
+      - VIKUNJA_SERVICE_ENABLEREGISTRATION=true
+      - VIKUNJA_DATABASE_TYPE=sqlite
+    volumes:
+      - ${SERVER_BASE_PATH}/vikunja/db:/db
+      - ${SERVER_BASE_PATH}/vikunja/files:/app/vikunja/files
+    networks:
+      - voidroute
+
   portainer:
     image: portainer/portainer-ce:lts
     container_name: portainer

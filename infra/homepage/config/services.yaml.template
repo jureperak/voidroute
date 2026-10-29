@@ -52,6 +52,13 @@
         server: my-docker
         container: gym-web
 
+    - Planner:
+        icon: vikunja.png
+        href: https://planner.${SERVER_NAME}
+        description: Tasks, lists and notes
+        server: my-docker
+        container: vikunja
+
     - Architecture:
         icon: mdi-sitemap-outline
         href: https://homepage.${SERVER_NAME}/images/architecture.svg

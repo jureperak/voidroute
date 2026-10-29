@@ -71,6 +71,17 @@ jobs:
       - name: Prepare openGym data folder
         run: mkdir -p "$SERVER_BASE_PATH/opengym/data"
 
+      - name: Write Vikunja env
+        env:
+          VIKUNJA_JWT_SECRET: ${{ secrets.VIKUNJA_JWT_SECRET }}
+        run: |
+          set -euo pipefail
+          [ -n "$VIKUNJA_JWT_SECRET" ] || { echo "::error::secret VIKUNJA_JWT_SECRET is not set"; exit 1; }
+          mkdir -p "$SERVER_BASE_PATH/vikunja/db" "$SERVER_BASE_PATH/vikunja/files"
+          umask 077
+          printf 'VIKUNJA_SERVICE_JWTSECRET=%s\n' "$VIKUNJA_JWT_SECRET" > "$SERVER_BASE_PATH/vikunja/vikunja.env"
+          chmod 600 "$SERVER_BASE_PATH/vikunja/vikunja.env"
+
       - name: Ensure docker network exists
         run: |
           docker network inspect "$DOCKER_NETWORK" >/dev/null 2>&1 || \
