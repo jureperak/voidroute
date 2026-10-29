@@ -101,7 +101,7 @@ services:
     env_file:
       - ${SERVER_BASE_PATH}/vikunja/vikunja.env
     environment:
-      - VIKUNJA_SERVICE_PUBLICURL=https://tasks.${SERVER_NAME}
+      - VIKUNJA_SERVICE_PUBLICURL=https://planner.${SERVER_NAME}
       # TEMPORARY: true only to create the first account, then set back to false
       - VIKUNJA_SERVICE_ENABLEREGISTRATION=true
       - VIKUNJA_DATABASE_TYPE=sqlite
