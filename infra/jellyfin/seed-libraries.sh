@@ -44,3 +44,4 @@ get /System/Info/Public >/dev/null || { echo "::error::Jellyfin API is not reach
 
 add_library Movies movies /media/movies
 add_library Shows tvshows /media/series
+add_library Music music /media/music

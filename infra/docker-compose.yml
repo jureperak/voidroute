@@ -155,6 +155,7 @@ services:
       - ${MEDIA_ROOT}/config/jellyfin:/config
       - ${MEDIA_ROOT}/data/media/movies:/media/movies
       - ${MEDIA_ROOT}/data/media/series:/media/series
+      - ${MEDIA_ROOT}/data/media/music:/media/music
     networks:
       - voidroute
 
@@ -226,6 +227,34 @@ services:
     volumes:
       - ${MEDIA_ROOT}/config/bazarr:/config
       - ${MEDIA_ROOT}/data/media:/data/media
+    networks:
+      - voidroute
+
+  lidarr:
+    image: lscr.io/linuxserver/lidarr
+    container_name: lidarr
+    restart: unless-stopped
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${MEDIA_ROOT}/config/lidarr:/config
+      - ${MEDIA_ROOT}/data:/data
+    networks:
+      - voidroute
+
+  # Music requests and discovery on top of Lidarr. Mounts the same /data as Lidarr so library paths match
+  aurral:
+    image: ghcr.io/lklynet/aurral:latest
+    container_name: aurral
+    restart: unless-stopped
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+    volumes:
+      - ${SERVER_BASE_PATH}/aurral/config:/config
+      - ${MEDIA_ROOT}/data:/data
     networks:
       - voidroute
 

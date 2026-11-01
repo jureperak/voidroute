@@ -20,6 +20,8 @@ There is no application source code, build system, or test suite — this is pur
 | Radarr | Movie management | radarr.* |
 | Prowlarr | Indexer management | prowlarr.* |
 | Bazarr | Subtitle management | bazarr.* |
+| Lidarr | Music management | lidarr.* |
+| Aurral | Music requests and discovery, on top of Lidarr | aurral.* |
 | Seerr | Request/discovery UI (successor to Jellyseerr, image `ghcr.io/seerr-team/seerr`, pinned to `v3.5.0`) | jellyseerr.* |
 | Vaultwarden | Password manager (Bitwarden-compatible server, image `vaultwarden/server:1.37.4`) | vault.* |
 | Flaresolverr | Cloudflare solver for Prowlarr | (internal only) |
@@ -39,10 +41,10 @@ A separate `homepage-mgmt` network (internal, `172.30.254.0/28`, dynamic IPs lim
 **Folder layout** follows TRaSH Guides conventions:
 ```
 ${MEDIA_ROOT}/
-├── config/{jellyfin,qbittorrent,sonarr,radarr,prowlarr,bazarr,jellyseerr}/
+├── config/{jellyfin,qbittorrent,sonarr,radarr,lidarr,prowlarr,bazarr,jellyseerr}/
 └── data/
-    ├── downloads/torrents/{movies,series,incomplete}/
-    └── media/{movies,series}/
+    ├── downloads/torrents/{movies,series,music,incomplete}/
+    └── media/{movies,series,music}/
 ```
 
 qBittorrent, Sonarr and Radarr mount `${MEDIA_ROOT}/data` as a single `/data` volume so imports use hardlinks and atomic moves. Do not split it into separate `/downloads` and `/media` mounts — hardlinks/renames fail across bind mounts and fall back to copying.
@@ -65,11 +67,11 @@ The deploy also wires the apps together through their APIs. Each step is idempot
 
 Use the app's own field names: they're in each app's source (`MediaManagementConfigResource.cs`, `NamingConfigResource.cs`). Guessed names are silently skipped, not errors.
 
-**Manual, on purpose:** Bazarr's language profile (its settings endpoint replaces the whole profile list, so scripting it can delete profiles), and Prowlarr's indexers (tracker credentials differ per tracker).
+**Manual, on purpose:** Bazarr's language profile (its settings endpoint replaces the whole profile list, so scripting it can delete profiles), Prowlarr's indexers (tracker credentials differ per tracker), Lidarr's root folder (`/data/media/music`), and Aurral's connections to Lidarr and Jellyfin (entered in Aurral's UI with the keys).
 
 ## Secrets and variables
 
-GitHub **secrets**: `VAULTWARDEN_ADMIN_TOKEN`, `PORKBUN_API_KEY`, `PORKBUN_API_SECRET_KEY`, `JELLYFIN_API_KEY`, `SEERR_API_KEY`, `SONARR_API_KEY`, `RADARR_API_KEY`, `PROWLARR_API_KEY`, `BAZARR_API_KEY`, `QBITTORRENT_USERNAME`, `QBITTORRENT_PASSWORD`.
+GitHub **secrets**: `VAULTWARDEN_ADMIN_TOKEN`, `PORKBUN_API_KEY`, `PORKBUN_API_SECRET_KEY`, `JELLYFIN_API_KEY`, `SEERR_API_KEY`, `SONARR_API_KEY`, `RADARR_API_KEY`, `PROWLARR_API_KEY`, `BAZARR_API_KEY`, `QBITTORRENT_USERNAME`, `QBITTORRENT_PASSWORD`, `LIDARR_API_KEY`, `ADGUARD_USERNAME`, `ADGUARD_PASSWORD`.
 
 The arr keys can be any 32-character hex string, generated with `openssl rand -hex 16`. The deploy writes them into each app. `SEERR_API_KEY` and `JELLYFIN_API_KEY` are created inside those apps, after their first start.
 

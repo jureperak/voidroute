@@ -31,6 +31,16 @@
           type: caddy
           url: http://172.30.254.2:2019
 
+    - AdGuard:
+        icon: adguard-home.png
+        href: https://adguard.${SERVER_NAME}
+        description: DNS and ad blocking
+        widget:
+          type: adguard
+          url: http://192.168.8.1:3000
+          username: ${ADGUARD_USERNAME}
+          password: ${ADGUARD_PASSWORD}
+
     - Portainer:
         icon: portainer.png
         href: https://portainer.${SERVER_NAME}
@@ -115,6 +125,24 @@
           type: radarr
           url: http://radarr:7878
           key: ${RADARR_API_KEY}
+
+    - Lidarr:
+        icon: lidarr.png
+        href: https://lidarr.${SERVER_NAME}
+        description: Music management
+        server: my-docker
+        container: lidarr
+        widget:
+          type: lidarr
+          url: http://lidarr:8686
+          key: ${LIDARR_API_KEY}
+
+    - Aurral:
+        icon: mdi-music-box-multiple-outline
+        href: https://aurral.${SERVER_NAME}
+        description: Music requests
+        server: my-docker
+        container: aurral
 
     - Bazarr:
         icon: bazarr.png

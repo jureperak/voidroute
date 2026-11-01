@@ -13,6 +13,8 @@
         - href: https://sonarr.${SERVER_NAME}
     - Radarr:
         - href: https://radarr.${SERVER_NAME}
+    - Lidarr:
+        - href: https://lidarr.${SERVER_NAME}
     - Prowlarr:
         - href: https://prowlarr.${SERVER_NAME}
     - Bazarr:
