@@ -33,7 +33,7 @@
 
     - AdGuard:
         icon: adguard-home.png
-        href: https://adguard.${SERVER_NAME}
+        href: http://192.168.8.1:3000
         description: DNS and ad blocking
         widget:
           type: adguard

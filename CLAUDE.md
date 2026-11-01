@@ -27,7 +27,7 @@ There is no application source code, build system, or test suite — this is pur
 | Flaresolverr | Cloudflare solver for Prowlarr | (internal only) |
 | Portainer | Docker management UI | portainer.* |
 | Docker socket proxy | Read-only Docker API for Homepage | (internal only) |
-| AdGuard Home | DNS/ad blocking (external) | adguard.* |
+| AdGuard Home | DNS/ad blocking, runs on the router (direct at 192.168.8.1:3000) | — |
 | PostgreSQL | Database (separate workflow) | — |
 
 ## Architecture

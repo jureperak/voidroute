@@ -1,6 +1,6 @@
 - Admin:
     - AdGuard:
-        - href: https://adguard.${SERVER_NAME}
+        - href: http://192.168.8.1:3000
     - Router:
         - href: http://192.168.8.1
     - Portainer:
