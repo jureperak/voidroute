@@ -19,5 +19,5 @@
         - href: https://prowlarr.${SERVER_NAME}
     - Bazarr:
         - href: https://bazarr.${SERVER_NAME}
-    - Jellyseerr:
-        - href: https://jellyseerr.${SERVER_NAME}
+    - Seerr:
+        - href: https://seerr.${SERVER_NAME}

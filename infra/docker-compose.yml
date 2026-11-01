@@ -267,9 +267,9 @@ services:
     networks:
       - voidroute
 
-  jellyseerr:
+  seerr:
     image: ghcr.io/seerr-team/seerr:v3.5.0
-    container_name: jellyseerr
+    container_name: seerr
     restart: unless-stopped
     init: true
     environment:

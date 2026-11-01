@@ -59,7 +59,7 @@
     <rect x="60" y="280" width="124" height="50" rx="6" fill="#ffffff" stroke="#2563eb" stroke-width="1.5"/>
     <text x="122" y="310" fill="#0f172a">Jellyfin</text>
     <rect x="200" y="280" width="124" height="50" rx="6" fill="#ffffff" stroke="#2563eb" stroke-width="1.5"/>
-    <text x="262" y="310" fill="#0f172a">Jellyseerr</text>
+    <text x="262" y="310" fill="#0f172a">Seerr</text>
     <rect x="340" y="280" width="124" height="50" rx="6" fill="#ffffff" stroke="#2563eb" stroke-width="1.5"/>
     <text x="402" y="310" fill="#0f172a">Sonarr</text>
     <rect x="480" y="280" width="124" height="50" rx="6" fill="#ffffff" stroke="#2563eb" stroke-width="1.5"/>
