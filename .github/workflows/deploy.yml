@@ -71,6 +71,9 @@ jobs:
       - name: Prepare openGym data folder
         run: mkdir -p "$SERVER_BASE_PATH/opengym/data"
 
+      - name: Prepare Aurral and music folders
+        run: mkdir -p "$SERVER_BASE_PATH/aurral/config" "$MEDIA_ROOT/data/media/music"
+
       - name: Write Vikunja env
         env:
           VIKUNJA_JWT_SECRET: ${{ secrets.VIKUNJA_JWT_SECRET }}
@@ -107,6 +110,9 @@ jobs:
           PROWLARR_API_KEY: ${{ secrets.PROWLARR_API_KEY }}
           BAZARR_API_KEY: ${{ secrets.BAZARR_API_KEY }}
           SEERR_API_KEY: ${{ secrets.SEERR_API_KEY }}
+          LIDARR_API_KEY: ${{ secrets.LIDARR_API_KEY }}
+          ADGUARD_USERNAME: ${{ secrets.ADGUARD_USERNAME }}
+          ADGUARD_PASSWORD: ${{ secrets.ADGUARD_PASSWORD }}
         run: |
           mkdir -p "$SERVER_BASE_PATH/homepage/config"
 
@@ -127,6 +133,7 @@ jobs:
           RADARR_API_KEY: ${{ secrets.RADARR_API_KEY }}
           PROWLARR_API_KEY: ${{ secrets.PROWLARR_API_KEY }}
           BAZARR_API_KEY: ${{ secrets.BAZARR_API_KEY }}
+          LIDARR_API_KEY: ${{ secrets.LIDARR_API_KEY }}
         run: |
           set -euo pipefail
           seed_key() {
@@ -148,6 +155,7 @@ jobs:
           }
           seed_key sonarr "$SONARR_API_KEY"
           seed_key radarr "$RADARR_API_KEY"
+          seed_key lidarr "$LIDARR_API_KEY"
           seed_key prowlarr "$PROWLARR_API_KEY"
           seed_bazarr_key() {
             local key="$1" file="$MEDIA_ROOT/config/bazarr/config/config.yaml" current
@@ -177,6 +185,7 @@ jobs:
           PROWLARR_API_KEY: ${{ secrets.PROWLARR_API_KEY }}
           SONARR_API_KEY: ${{ secrets.SONARR_API_KEY }}
           RADARR_API_KEY: ${{ secrets.RADARR_API_KEY }}
+          LIDARR_API_KEY: ${{ secrets.LIDARR_API_KEY }}
         run: |
           set -euo pipefail
           api() {
@@ -202,6 +211,7 @@ jobs:
 
           link_app Sonarr http://sonarr:8989 "$SONARR_API_KEY"
           link_app Radarr http://radarr:7878 "$RADARR_API_KEY"
+          link_app Lidarr http://lidarr:8686 "$LIDARR_API_KEY"
 
       - name: Link Seerr to Sonarr and Radarr
         env:
@@ -223,6 +233,7 @@ jobs:
         env:
           SONARR_API_KEY: ${{ secrets.SONARR_API_KEY }}
           RADARR_API_KEY: ${{ secrets.RADARR_API_KEY }}
+          LIDARR_API_KEY: ${{ secrets.LIDARR_API_KEY }}
           QBITTORRENT_USERNAME: ${{ secrets.QBITTORRENT_USERNAME }}
           QBITTORRENT_PASSWORD: ${{ secrets.QBITTORRENT_PASSWORD }}
         run: bash infra/arr/seed-download-clients.sh

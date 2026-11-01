@@ -48,6 +48,8 @@
 	import service radarr radarr:7878
 	import service prowlarr prowlarr:9696
 	import service bazarr bazarr:6767
+	import service lidarr lidarr:8686
+	import service aurral aurral:3001
 
 	handle {
 		respond "Not found" 404
