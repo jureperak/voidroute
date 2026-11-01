@@ -22,7 +22,7 @@ There is no application source code, build system, or test suite — this is pur
 | Bazarr | Subtitle management | bazarr.* |
 | Lidarr | Music management | lidarr.* |
 | Aurral | Music requests and discovery, on top of Lidarr | aurral.* |
-| Seerr | Request/discovery UI (successor to Jellyseerr, image `ghcr.io/seerr-team/seerr`, pinned to `v3.5.0`) | jellyseerr.* |
+| Seerr | Request/discovery UI (successor to Jellyseerr, image `ghcr.io/seerr-team/seerr`, pinned to `v3.5.0`) | seerr.* |
 | Vaultwarden | Password manager (Bitwarden-compatible server, image `vaultwarden/server:1.37.4`) | vault.* |
 | Flaresolverr | Cloudflare solver for Prowlarr | (internal only) |
 | Portainer | Docker management UI | portainer.* |

@@ -227,8 +227,8 @@ jobs:
           RADARR_API_KEY: ${{ secrets.RADARR_API_KEY }}
         run: |
           set -euo pipefail
-          docker cp infra/seerr/link-arr.js jellyseerr:/tmp/link-arr.js
-          docker exec -e SEERR_API_KEY -e SONARR_API_KEY -e RADARR_API_KEY jellyseerr node /tmp/link-arr.js
+          docker cp infra/seerr/link-arr.js seerr:/tmp/link-arr.js
+          docker exec -e SEERR_API_KEY -e SONARR_API_KEY -e RADARR_API_KEY seerr node /tmp/link-arr.js
 
       - name: Seed Sonarr and Radarr quality profiles
         env:

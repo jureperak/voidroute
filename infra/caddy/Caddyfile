@@ -42,7 +42,7 @@
 	import service planner vikunja:3456
 	import service speed speedtest:80
 	import service jellyfin jellyfin:8096
-	import service jellyseerr jellyseerr:5055
+	import service seerr seerr:5055
 	import service qbittorrent qbittorrent:8080
 	import service sonarr sonarr:8989
 	import service radarr radarr:7878

@@ -93,15 +93,15 @@
           key: ${JELLYFIN_API_KEY}
           version: 2
 
-    - Jellyseerr:
+    - Seerr:
         icon: jellyseerr.png
-        href: https://jellyseerr.${SERVER_NAME}
+        href: https://seerr.${SERVER_NAME}
         description: Requests
         server: my-docker
-        container: jellyseerr
+        container: seerr
         widget:
           type: jellyseerr
-          url: http://jellyseerr:5055
+          url: http://seerr:5055
           key: ${SEERR_API_KEY}
 
     - Sonarr:
