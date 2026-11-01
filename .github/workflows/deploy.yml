@@ -211,6 +211,13 @@ jobs:
 
           link_app Sonarr http://sonarr:8989 "$SONARR_API_KEY"
           link_app Radarr http://radarr:7878 "$RADARR_API_KEY"
+          # Lidarr starts slower than the others; Prowlarr tests the connection when it links
+          for _ in $(seq 60); do
+            docker exec lidarr curl -sf -H "X-Api-Key: $LIDARR_API_KEY" http://localhost:8686/api/v1/system/status >/dev/null 2>&1 && break
+            sleep 2
+          done
+          docker exec lidarr curl -sf -H "X-Api-Key: $LIDARR_API_KEY" http://localhost:8686/api/v1/system/status >/dev/null || { echo "::error::Lidarr API is not reachable"; exit 1; }
+
           link_app Lidarr http://lidarr:8686 "$LIDARR_API_KEY"
 
       - name: Link Seerr to Sonarr and Radarr
