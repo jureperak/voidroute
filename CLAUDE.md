@@ -25,6 +25,7 @@ There is no application source code, build system, or test suite — this is pur
 | Seerr | Request/discovery UI (successor to Jellyseerr, image `ghcr.io/seerr-team/seerr`, pinned to `v3.5.0`) | seerr.* |
 | Vaultwarden | Password manager (Bitwarden-compatible server, image `vaultwarden/server:1.37.4`) | vault.* |
 | Flaresolverr | Cloudflare solver for Prowlarr | (internal only) |
+| Byparr | Cloudflare solver for Prowlarr, alternative to Flaresolverr | (internal only) |
 | Portainer | Docker management UI | portainer.* |
 | Docker socket proxy | Read-only Docker API for Homepage | (internal only) |
 | AdGuard Home | DNS/ad blocking, runs on the router (direct at 192.168.8.1:3000) | — |
