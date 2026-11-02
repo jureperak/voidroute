@@ -46,3 +46,19 @@ jobs:
             sleep 2
           done
           echo "Postgres not ready" && exit 1
+
+      - name: Create app database role
+        env:
+          APP_DB_PASSWORD: ${{ secrets.APP_DB_PASSWORD }}
+        run: |
+          set -euo pipefail
+          [ -n "$APP_DB_PASSWORD" ] || { echo "::error::secret APP_DB_PASSWORD is not set"; exit 1; }
+          # CREATEDB lets the app's EF Core Migrate() create its database on first start.
+          # The password is re-applied on every run, so it stays in sync with the secret.
+          docker exec -i -e APP_DB_PASSWORD postgres sh -c 'psql -v ON_ERROR_STOP=1 -U postgres -v pw="$APP_DB_PASSWORD"' <<'SQL'
+          SELECT 'CREATE ROLE store_scrapper LOGIN'
+          WHERE NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'store_scrapper')
+          \gexec
+          SELECT format('ALTER ROLE store_scrapper LOGIN PASSWORD %L CREATEDB', :'pw')
+          \gexec
+          SQL
