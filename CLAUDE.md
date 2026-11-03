@@ -27,7 +27,7 @@ There is no application source code, build system, or test suite — this is pur
 | Flaresolverr | Cloudflare solver for Prowlarr | (internal only) |
 | Byparr | Cloudflare solver for Prowlarr, alternative to Flaresolverr | (internal only) |
 | Ollama | Local LLM server for the voice assistant (`qwen3:1.7b`) | (internal only) |
-| Voice | Push-to-talk assistant: phone page, Whisper STT, SpeechT5 TTS, Cast to the TV (`infra/voice/`) | voice.* |
+| Voice | Push-to-talk assistant: phone page, Croatian wav2vec2 STT, SpeechT5 TTS, Cast to the TV (`infra/voice/`) | voice.* |
 | Portainer | Docker management UI | portainer.* |
 | Docker socket proxy | Read-only Docker API for Homepage | (internal only) |
 | AdGuard Home | DNS/ad blocking, runs on the router (direct at 192.168.8.1:3000) | — |

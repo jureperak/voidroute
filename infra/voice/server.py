@@ -17,6 +17,7 @@ from fastapi.responses import FileResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 
 import assistant
+import stt
 
 HERE = Path(__file__).resolve().parent
 HEX32 = re.compile(r"[0-9a-f]{32}")
@@ -53,7 +54,7 @@ async def talk(request: Request):
     pcm = await to_pcm16k(await request.body())
     if pcm.size < 8000:  # under half a second: an accidental tap
         return {"ok": False, "reason": "too short"}
-    text = await asyncio.to_thread(assistant.transcribe, pcm)
+    text = await asyncio.to_thread(stt.transcribe, pcm)
     if not text:
         return {"ok": False, "reason": "nothing heard"}
     print("TI:", text, flush=True)

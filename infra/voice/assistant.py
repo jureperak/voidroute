@@ -14,15 +14,11 @@ import time
 import uuid
 from pathlib import Path
 
-import httpx
 import pychromecast
-from faster_whisper import WhisperModel
-
 import tts
 
 OLLAMA_URL = os.environ["OLLAMA_URL"]
 LLM_MODEL = os.environ["LLM_MODEL"]
-WHISPER_MODEL = os.environ["WHISPER_MODEL"]
 JF_URL = os.environ["JELLYFIN_URL"]
 JF_KEY = os.environ["JELLYFIN_API_KEY"]
 PUBLIC_BASE_URL = os.environ["PUBLIC_BASE_URL"]
@@ -64,8 +60,6 @@ MEDIA_RE = re.compile(r"\b(?:pust|reprodu)\w*\s+(.+?)\s+na\s+(?:televiz\w*|tv)\b
 PAUSE_RE = re.compile(r"\bpauz\w*", re.IGNORECASE)
 STOP_RE = re.compile(r"\b(?:zaustavi|prekini)\w*", re.IGNORECASE)
 
-_whisper = WhisperModel(WHISPER_MODEL, device="cpu", compute_type="int8", cpu_threads=4)
-_stt_lock = threading.Lock()
 
 _cast = None
 _cast_lock = threading.Lock()  # one Cast command at a time
@@ -76,12 +70,6 @@ FILLER_CLIPS = []
 
 def jf_headers():
     return {"X-Emby-Token": JF_KEY}
-
-
-def transcribe(pcm):
-    with _stt_lock:
-        segments, _ = _whisper.transcribe(pcm, language="hr", beam_size=1, vad_filter=True)
-        return " ".join(s.text for s in segments).strip()
 
 
 def _tv():

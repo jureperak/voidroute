@@ -1,4 +1,3 @@
-faster-whisper==1.2.1
 pychromecast==14.1.1
 transformers==5.22.1
 sentencepiece==0.2.2

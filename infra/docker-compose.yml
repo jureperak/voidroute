@@ -315,7 +315,6 @@ services:
     environment:
       - OLLAMA_URL=http://ollama:11434
       - LLM_MODEL=qwen3:1.7b
-      - WHISPER_MODEL=small
       - JELLYFIN_URL=http://jellyfin:8096
       - JELLYFIN_PUBLIC_URL=https://jellyfin.${SERVER_NAME}
       - PUBLIC_BASE_URL=https://voice.${SERVER_NAME}
