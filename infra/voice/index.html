@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="hr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Glas</title>
+<style>
+  :root { --bg: #f6f6f4; --fg: #1c1c1a; --accent: #2f6fed; }
+  @media (prefers-color-scheme: dark) { :root { --bg: #161614; --fg: #eee; } }
+  body { margin: 0; min-height: 100vh; display: grid; place-items: center;
+         background: var(--bg); color: var(--fg); font-family: system-ui, sans-serif; }
+  button { width: 180px; height: 180px; border-radius: 50%; border: 0;
+           background: var(--accent); color: #fff; font-size: 56px;
+           touch-action: none; user-select: none; -webkit-user-select: none; }
+  button.rec { background: #d93025; }
+  p { text-align: center; margin: 20px 16px 0; font-size: 18px; }
+</style>
+</head>
+<body>
+<div>
+  <button id="mic" aria-label="Pritisni i drži za govor">🎙</button>
+  <p id="status">Pritisni i drži, pa govori.</p>
+</div>
+<script>
+const btn = document.getElementById("mic");
+const status = document.getElementById("status");
+const IDLE = "Pritisni i drži, pa govori.";
+let rec = null, stream = null, chunks = [], holding = false;
+
+async function start() {
+  holding = true;
+  stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  if (!holding) {                       // finger lifted while the permission dialog was open
+    stream.getTracks().forEach(t => t.stop());
+    return;
+  }
+  chunks = [];
+  rec = new MediaRecorder(stream);
+  rec.ondataavailable = e => { if (e.data.size) chunks.push(e.data); };
+  rec.onstop = upload;
+  rec.start();
+  btn.classList.add("rec");
+  status.textContent = "Slušam...";
+}
+
+function stop() {
+  holding = false;
+  btn.classList.remove("rec");
+  if (rec && rec.state === "recording") rec.stop();
+}
+
+async function upload() {
+  stream.getTracks().forEach(t => t.stop());   // mic off right away
+  const blob = new Blob(chunks, { type: rec.mimeType });
+  status.textContent = "Razmišljam...";
+  try {
+    const r = await fetch("/talk", { method: "POST", body: blob,
+                                     headers: { "Content-Type": blob.type } });
+    status.textContent = r.ok ? IDLE : "Greška, pokušaj ponovo.";
+  } catch {
+    status.textContent = "Nema veze sa serverom.";
+  }
+}
+
+btn.addEventListener("pointerdown", e => {
+  e.preventDefault();
+  start().catch(() => {
+    holding = false;
+    status.textContent = "Mikrofon nije dostupan. Dopusti pristup u postavkama preglednika.";
+  });
+});
+btn.addEventListener("pointerup", stop);
+btn.addEventListener("pointercancel", stop);
+btn.addEventListener("pointerleave", stop);
+</script>
+</body>
+</html>
