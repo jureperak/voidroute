@@ -1,7 +1,7 @@
 """Voice pipeline: one transcript in, one spoken reply out on the TV.
 
 server.py records and transcribes; this module routes the transcript, asks the
-LLM, synthesizes speech with Piper and casts it to the TV. Push-to-talk only:
+LLM, synthesizes speech with SpeechT5 (tts.py) and casts it to the TV. Push-to-talk only:
 nothing listens between button presses.
 """
 import asyncio
@@ -9,16 +9,16 @@ import json
 import os
 import random
 import re
-import subprocess
 import threading
 import time
 import uuid
-import wave
 from pathlib import Path
 
 import httpx
 import pychromecast
 from faster_whisper import WhisperModel
+
+import tts
 
 OLLAMA_URL = os.environ["OLLAMA_URL"]
 LLM_MODEL = os.environ["LLM_MODEL"]
@@ -29,7 +29,6 @@ PUBLIC_BASE_URL = os.environ["PUBLIC_BASE_URL"]
 TV_NAME = os.environ["TV_NAME"]
 TV_IP = os.environ["TV_IP"]
 TV_UUID = os.environ["TV_UUID"]
-PIPER_VOICE = os.environ["PIPER_VOICE"]
 
 TV_MODEL = "2021/22 Philips UHD Android TV"  # as reported by Cast discovery
 CLIP_DIR = Path("/tmp/tts")
@@ -114,10 +113,7 @@ def _play(url, mime):
 
 
 def _synth(text, path):
-    subprocess.run(["piper", "-m", PIPER_VOICE, "-f", str(path)],
-                   input=text.encode("utf-8"), check=True, capture_output=True)
-    with wave.open(str(path)) as w:
-        return w.getnframes() / w.getframerate()
+    return tts.get_speaker().to_wav(text, path)
 
 
 def _prune_clips():

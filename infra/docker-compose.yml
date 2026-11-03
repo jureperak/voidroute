@@ -302,7 +302,7 @@ services:
     networks:
       - voidroute
 
-  # Push-to-talk assistant: phone page, speech-to-text, LLM, Piper TTS, Cast to the TV
+  # Push-to-talk assistant: phone page, speech-to-text, LLM, SpeechT5 TTS, Cast to the TV
   voice:
     build: ./voice
     image: voidroute-voice:latest
@@ -322,7 +322,7 @@ services:
       - TV_NAME=65OLED707/12
       - TV_IP=192.168.8.144
       - TV_UUID=ed81ea98-3b35-65ab-f542-c1745badedd8
-      - PIPER_VOICE=/models/sr_RS-serbski_institut-medium.onnx
+      - SPEAKER_XVECTOR=/models/speaker_xvector.npy
       - HF_HOME=/cache
     volumes:
       - ${SERVER_BASE_PATH}/voice/models:/models:ro

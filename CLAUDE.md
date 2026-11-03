@@ -27,7 +27,7 @@ There is no application source code, build system, or test suite — this is pur
 | Flaresolverr | Cloudflare solver for Prowlarr | (internal only) |
 | Byparr | Cloudflare solver for Prowlarr, alternative to Flaresolverr | (internal only) |
 | Ollama | Local LLM server for the voice assistant (`qwen3:1.7b`) | (internal only) |
-| Voice | Push-to-talk assistant: phone page, Whisper STT, Piper TTS, Cast to the TV (`infra/voice/`) | voice.* |
+| Voice | Push-to-talk assistant: phone page, Whisper STT, SpeechT5 TTS, Cast to the TV (`infra/voice/`) | voice.* |
 | Portainer | Docker management UI | portainer.* |
 | Docker socket proxy | Read-only Docker API for Homepage | (internal only) |
 | AdGuard Home | DNS/ad blocking, runs on the router (direct at 192.168.8.1:3000) | — |
@@ -70,7 +70,7 @@ The deploy also wires the apps together through their APIs. Each step is idempot
 
 Use the app's own field names: they're in each app's source (`MediaManagementConfigResource.cs`, `NamingConfigResource.cs`). Guessed names are silently skipped, not errors.
 
-**Manual, on purpose:** Bazarr's language profile (its settings endpoint replaces the whole profile list, so scripting it can delete profiles), Prowlarr's indexers (tracker credentials differ per tracker), Lidarr's root folder (`/data/media/music`), and Aurral's connections to Lidarr and Jellyfin (entered in Aurral's UI with the keys). Voice assistant: put the Piper voice file in `${SERVER_BASE_PATH}/voice/models/` (not in Git), pull the LLM with `docker exec ollama ollama pull qwen3:1.7b`, and add the AdGuard rewrite `voice.*` → `192.168.8.66`. The TV must have the Jellyfin app installed.
+**Manual, on purpose:** Bazarr's language profile (its settings endpoint replaces the whole profile list, so scripting it can delete profiles), Prowlarr's indexers (tracker credentials differ per tracker), Lidarr's root folder (`/data/media/music`), and Aurral's connections to Lidarr and Jellyfin (entered in Aurral's UI with the keys). Voice assistant: put the speaker vector `speaker_xvector.npy` in `${SERVER_BASE_PATH}/voice/models/` (not in Git; the 512-number `cmu_us_slt` vector from the `Matthijs/cmu-arctic-xvectors` zip), pull the LLM with `docker exec ollama ollama pull qwen3:1.7b`, and add the AdGuard rewrite `voice.*` → `192.168.8.66`. The TV must have the Jellyfin app installed.
 
 ## Secrets and variables
 

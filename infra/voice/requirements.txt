@@ -1,6 +1,7 @@
 faster-whisper==1.2.1
 pychromecast==14.1.1
-piper-tts==1.8.0
+transformers==5.22.1
+sentencepiece==0.2.2
 fastapi==0.162.0
 uvicorn==0.54.0
 httpx==0.28.1
