@@ -14,6 +14,7 @@ import time
 import uuid
 from pathlib import Path
 
+import httpx
 import pychromecast
 import tts
 
@@ -32,25 +33,13 @@ FILLER_DIR = CLIP_DIR / "fillers"
 CLIP_TTL_S = 900
 
 SYSTEM_PROMPT = """Ti si glasovni asistent u domu korisnika. Govoriš hrvatski, neformalno (na "ti"), opušteno i prijateljski.
-Uvijek vrati JSON s poljima:
-- "speech": što ćeš reći naglas. Najviše dvije kratke rečenice, bez popisa i markdowna. Ne počinji uvodnim frazama, filer je već izrečen.
-- "action": objekt s poljima "type" i "query". "type" je "none", "play_music" ili "stop". Za "play_music" u "query" stavi što treba pustiti. Inače je "query" prazan string.
-Nikad ne izmišljaj činjenice. Ako nisi siguran, reci to."""
+Uvijek vrati JSON s poljem "speech": što ćeš reći naglas. Najviše dvije kratke rečenice, bez popisa i markdowna. Ne počinji uvodnim frazama, filer je već izrečen.
+Nikad ne izmišljaj činjenice. Nemaš pristup internetu ni aktualnim podacima. Ako nisi siguran, reci to."""
 
 RESPONSE_SCHEMA = {
     "type": "object",
-    "properties": {
-        "speech": {"type": "string"},
-        "action": {
-            "type": "object",
-            "properties": {
-                "type": {"type": "string", "enum": ["none", "play_music", "stop"]},
-                "query": {"type": "string"},
-            },
-            "required": ["type", "query"],
-        },
-    },
-    "required": ["speech", "action"],
+    "properties": {"speech": {"type": "string"}},
+    "required": ["speech"],
 }
 
 FILLERS = ["E evo sekunda, odmah provjeravam.", "Evo sad ću.", "Momentak, pogledam."]
@@ -177,7 +166,11 @@ async def handle(text, http, local=None):
 
     m = MEDIA_RE.search(text)
     if m:
-        item = await _find_track(http, m.group(1))
+        try:
+            item = await _find_track(http, m.group(1))
+        except httpx.HTTPError:
+            await _say("Ne mogu trenutno pristupiti glazbi.", local)
+            return
         if item is None:
             await _say(f"Nisam pronašao {m.group(1)}.", local)
             return
@@ -198,10 +191,5 @@ async def handle(text, http, local=None):
     filler_url, filler_dur = random.choice(FILLER_CLIPS)
     filler = asyncio.create_task(_play_clip(filler_url, filler_dur, local))
     reply = await _ask_llm(http, text)
-    action = reply.get("action", {})
     await _say(reply["speech"], local)
     await filler
-    if action.get("type") == "play_music" and action.get("query"):
-        item = await _find_track(http, action["query"])
-        if item:
-            await _start_music(item)
