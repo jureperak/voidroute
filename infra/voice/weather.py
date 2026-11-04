@@ -67,9 +67,39 @@ def describe(code: int) -> str:
     return "promjenjivo"
 
 
-def number_words(value: float) -> str:
-    n = round(value)
-    return f"minus {abs(n)}" if n < 0 else str(n)
+# SpeechT5 has no digits in its vocabulary and drops them, so numbers are spelled out.
+_ONES = ["nula", "jedan", "dva", "tri", "četiri", "pet", "šest", "sedam", "osam", "devet",
+         "deset", "jedanaest", "dvanaest", "trinaest", "četrnaest", "petnaest", "šesnaest",
+         "sedamnaest", "osamnaest", "devetnaest"]
+_TENS = {2: "dvadeset", 3: "trideset", 4: "četrdeset", 5: "pedeset", 6: "šezdeset",
+         7: "sedamdeset", 8: "osamdeset", 9: "devedeset"}
+_HUNDREDS = {1: "sto", 2: "dvjesto", 3: "tristo", 4: "četiristo", 5: "petsto",
+             6: "šesto", 7: "sedamsto", 8: "osamsto", 9: "devetsto"}
+
+
+def hr_int(n: int) -> str:
+    """Croatian words for a whole number from -999 to 999 (the range of weather values)."""
+    if n < 0:
+        return "minus " + hr_int(-n)
+    if n < 20:
+        return _ONES[n]
+    if n < 100:
+        tens, ones = divmod(n, 10)
+        return _TENS[tens] + ("" if ones == 0 else " " + _ONES[ones])
+    if n < 1000:
+        hundreds, rest = divmod(n, 100)
+        return _HUNDREDS[hundreds] + ("" if rest == 0 else " " + hr_int(rest))
+    return str(n)
+
+
+def _unit(n: int, one: str, few: str, many: str) -> str:
+    """Croatian noun form for a count: 1 stupanj, 2 stupnja, 5 stupnjeva (11 and 12-14 take 'many')."""
+    last, last_two = n % 10, n % 100
+    if last == 1 and last_two != 11:
+        return one
+    if last in (2, 3, 4) and last_two not in (12, 13, 14):
+        return few
+    return many
 
 
 async def answer(http: httpx.AsyncClient, text: str) -> str:
@@ -89,6 +119,10 @@ async def answer(http: httpx.AsyncClient, text: str) -> str:
     })
     r.raise_for_status()
     cur = r.json()["current"]
-    return (f"{place['name']}: trenutno {number_words(cur['temperature_2m'])} stupnjeva, "
+    temp = round(cur["temperature_2m"])
+    wind = round(cur["wind_speed_10m"])
+    temp_unit = _unit(abs(temp), "stupanj", "stupnja", "stupnjeva")
+    wind_unit = _unit(abs(wind), "kilometar", "kilometra", "kilometara")
+    return (f"{place['name']}: trenutno {hr_int(temp)} {temp_unit}, "
             f"{describe(int(cur['weather_code']))}. "
-            f"Vjetar je {number_words(cur['wind_speed_10m'])} kilometara na sat.")
+            f"Vjetar je {hr_int(wind)} {wind_unit} na sat.")
