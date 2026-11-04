@@ -31,6 +31,9 @@ LOCATIVE = {
     "sibeniku": "Šibenik",
     "karlovcu": "Karlovac",
     "vukovaru": "Vukovar",
+    "vinkovcima": "Vinkovci",
+    "retkovcima": "Retkovci",
+    "prkovcima": "Prkovci",
 }
 
 
