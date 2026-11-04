@@ -17,6 +17,7 @@ from pathlib import Path
 import httpx
 import pychromecast
 import tts
+import weather
 
 OLLAMA_URL = os.environ["OLLAMA_URL"]
 LLM_MODEL = os.environ["LLM_MODEL"]
@@ -185,6 +186,15 @@ async def handle(text, http, local=None):
     if STOP_RE.search(text):
         _now_playing = None
         await asyncio.to_thread(_cast_call, lambda mc: mc.stop())
+        return
+
+    # Weather is looked up, not generated: the LLM has no live data
+    if weather.WEATHER_RE.search(text):
+        try:
+            speech = await weather.answer(http, text)
+        except (httpx.HTTPError, KeyError, ValueError):
+            speech = "Ne mogu trenutno dohvatiti vremensku prognozu."
+        await _say(speech, local)
         return
 
     # Question or chat: play a filler at once, then answer while the LLM works
