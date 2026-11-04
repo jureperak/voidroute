@@ -122,10 +122,10 @@ async def _say(text, local=None):
 async def _play_clip(url, dur, local=None, text=""):
     """Play a speech clip. Cast replaces the current media, so music is restarted after it.
 
-    With local set (a list), the clip URL and its text are collected for the caller to play instead.
+    With local set (an async callable), the clip URL and its text are sent to it instead.
     """
     if local is not None:
-        local.append({"audio": url, "text": text})
+        await local({"audio": url, "text": text})
         return
     async with _tv_lock:
         await asyncio.to_thread(_play, url, "audio/wav")
@@ -160,7 +160,8 @@ async def _ask_llm(http, text):
 
 
 async def handle(text, http, local=None):
-    """Route one transcript. local (a list) collects speech clip URLs instead of casting them.
+    """Route one transcript. local (an async callable) receives each speech clip instead of
+    casting it to the TV.
 
     Music always goes to the TV, even in local mode.
     """
