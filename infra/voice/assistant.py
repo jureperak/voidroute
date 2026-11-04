@@ -107,7 +107,7 @@ async def init_fillers():
     for i, text in enumerate(FILLERS):
         path = FILLER_DIR / f"{i}.wav"
         dur = await asyncio.to_thread(_synth, text, path)
-        FILLER_CLIPS.append((f"{PUBLIC_BASE_URL}/tts/fillers/{i}.wav", dur))
+        FILLER_CLIPS.append((f"{PUBLIC_BASE_URL}/tts/fillers/{i}.wav", dur, text))
 
 
 async def _say(text, local=None):
@@ -116,16 +116,16 @@ async def _say(text, local=None):
     path = CLIP_DIR / f"{time.time_ns()}.wav"
     dur = await asyncio.to_thread(_synth, text, path)
     await asyncio.to_thread(_prune_clips)
-    await _play_clip(f"{PUBLIC_BASE_URL}/tts/{path.name}", dur, local)
+    await _play_clip(f"{PUBLIC_BASE_URL}/tts/{path.name}", dur, local, text)
 
 
-async def _play_clip(url, dur, local=None):
+async def _play_clip(url, dur, local=None, text=""):
     """Play a speech clip. Cast replaces the current media, so music is restarted after it.
 
-    With local set (a list), the clip URL is collected for the caller to play instead.
+    With local set (a list), the clip URL and its text are collected for the caller to play instead.
     """
     if local is not None:
-        local.append(url)
+        local.append({"audio": url, "text": text})
         return
     async with _tv_lock:
         await asyncio.to_thread(_play, url, "audio/wav")
@@ -199,8 +199,8 @@ async def handle(text, http, local=None):
         return
 
     # Question or chat: play a filler at once, then answer while the LLM works
-    filler_url, filler_dur = random.choice(FILLER_CLIPS)
-    filler = asyncio.create_task(_play_clip(filler_url, filler_dur, local))
+    filler_url, filler_dur, filler_text = random.choice(FILLER_CLIPS)
+    filler = asyncio.create_task(_play_clip(filler_url, filler_dur, local, filler_text))
     reply = await _ask_llm(http, text)
     await _say(reply["speech"], local)
     await filler

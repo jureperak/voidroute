@@ -57,6 +57,8 @@ while true; do
     continue
   fi
   echo "Čuo sam: $text"
+  printf '%s' "$resp" | python3 -c 'import json,sys
+for t in json.load(sys.stdin).get("speech", []): print("Odgovor:", t)'
 
   printf '%s' "$resp" | python3 -c 'import json,sys
 for u in json.load(sys.stdin).get("audio", []): print(u)' |

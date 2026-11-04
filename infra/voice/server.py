@@ -62,7 +62,9 @@ async def talk(request: Request, local: bool = False):
     spoken = [] if local else None
     async with httpx.AsyncClient(timeout=120) as http:
         await assistant.handle(text, http, spoken)
-    return {"ok": True, "text": text, "audio": spoken or []}
+    return {"ok": True, "text": text,
+            "audio": [c["audio"] for c in spoken or []],
+            "speech": [c["text"] for c in spoken or []]}
 
 
 @app.get("/music/{item_id}")
