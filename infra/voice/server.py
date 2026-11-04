@@ -6,6 +6,7 @@
   GET  /music/{item_id}  Jellyfin audio, proxied so the API key never reaches the TV
 """
 import asyncio
+import json
 import re
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -51,7 +52,8 @@ async def index():
 
 @app.post("/talk")
 async def talk(request: Request, local: bool = False):
-    """One recording in. The reply goes to the TV, or with ?local=true its clip URLs are returned."""
+    """One recording in. The reply goes to the TV, or with ?local=true it streams back one
+    JSON line per event (heard, speech, audio), so each clip plays as soon as it is ready."""
     pcm = await to_pcm16k(await request.body())
     if pcm.size < 8000:  # under half a second: an accidental tap
         return {"ok": False, "reason": "too short"}
@@ -59,12 +61,31 @@ async def talk(request: Request, local: bool = False):
     if not text:
         return {"ok": False, "reason": "nothing heard"}
     print("TI:", text, flush=True)
-    spoken = [] if local else None
+    if local:
+        return StreamingResponse(_reply_lines(text), media_type="application/x-ndjson")
     async with httpx.AsyncClient(timeout=120) as http:
-        await assistant.handle(text, http, spoken)
-    return {"ok": True, "text": text,
-            "audio": [c["audio"] for c in spoken or []],
-            "speech": [c["text"] for c in spoken or []]}
+        await assistant.handle(text, http)
+    return {"ok": True, "text": text}
+
+
+async def _reply_lines(text):
+    """Run the pipeline in the background and yield its events as NDJSON lines."""
+    events: asyncio.Queue = asyncio.Queue()
+
+    async def run():
+        try:
+            async with httpx.AsyncClient(timeout=120) as http:
+                await assistant.handle(text, http, events.put)
+        except Exception as exc:  # sent to the client as an error line
+            await events.put({"error": str(exc)})
+        finally:
+            await events.put(None)
+
+    task = asyncio.create_task(run())
+    yield json.dumps({"ok": True, "text": text}, ensure_ascii=False) + "\n"
+    while (event := await events.get()) is not None:
+        yield json.dumps(event, ensure_ascii=False) + "\n"
+    await task
 
 
 @app.get("/music/{item_id}")
