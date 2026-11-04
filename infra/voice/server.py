@@ -50,7 +50,8 @@ async def index():
 
 
 @app.post("/talk")
-async def talk(request: Request):
+async def talk(request: Request, local: bool = False):
+    """One recording in. The reply goes to the TV, or with ?local=true its clip URLs are returned."""
     pcm = await to_pcm16k(await request.body())
     if pcm.size < 8000:  # under half a second: an accidental tap
         return {"ok": False, "reason": "too short"}
@@ -58,9 +59,10 @@ async def talk(request: Request):
     if not text:
         return {"ok": False, "reason": "nothing heard"}
     print("TI:", text, flush=True)
+    spoken = [] if local else None
     async with httpx.AsyncClient(timeout=120) as http:
-        await assistant.handle(text, http)
-    return {"ok": True, "text": text}
+        await assistant.handle(text, http, spoken)
+    return {"ok": True, "text": text, "audio": spoken or []}
 
 
 @app.get("/music/{item_id}")

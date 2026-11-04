@@ -120,16 +120,22 @@ async def init_fillers():
         FILLER_CLIPS.append((f"{PUBLIC_BASE_URL}/tts/fillers/{i}.wav", dur))
 
 
-async def _say(text):
+async def _say(text, local=None):
     CLIP_DIR.mkdir(parents=True, exist_ok=True)
     path = CLIP_DIR / f"{time.time_ns()}.wav"
     dur = await asyncio.to_thread(_synth, text, path)
     await asyncio.to_thread(_prune_clips)
-    await _play_clip(f"{PUBLIC_BASE_URL}/tts/{path.name}", dur)
+    await _play_clip(f"{PUBLIC_BASE_URL}/tts/{path.name}", dur, local)
 
 
-async def _play_clip(url, dur):
-    """Play a speech clip. Cast replaces the current media, so music is restarted after it."""
+async def _play_clip(url, dur, local=None):
+    """Play a speech clip. Cast replaces the current media, so music is restarted after it.
+
+    With local set (a list), the clip URL is collected for the caller to play instead.
+    """
+    if local is not None:
+        local.append(url)
+        return
     async with _tv_lock:
         await asyncio.to_thread(_play, url, "audio/wav")
         await asyncio.sleep(dur + 0.3)
@@ -162,16 +168,20 @@ async def _ask_llm(http, text):
     return json.loads(r.json()["message"]["content"])
 
 
-async def handle(text, http):
+async def handle(text, http, local=None):
+    """Route one transcript. local (a list) collects speech clip URLs instead of casting them.
+
+    Music always goes to the TV, even in local mode.
+    """
     global _now_playing
 
     m = MEDIA_RE.search(text)
     if m:
         item = await _find_track(http, m.group(1))
         if item is None:
-            await _say(f"Nisam pronašao {m.group(1)}.")
+            await _say(f"Nisam pronašao {m.group(1)}.", local)
             return
-        await _say(f"Puštam {item['Name']}.")
+        await _say(f"Puštam {item['Name']}.", local)
         await _start_music(item)
         return
 
@@ -186,10 +196,10 @@ async def handle(text, http):
 
     # Question or chat: play a filler at once, then answer while the LLM works
     filler_url, filler_dur = random.choice(FILLER_CLIPS)
-    filler = asyncio.create_task(_play_clip(filler_url, filler_dur))
+    filler = asyncio.create_task(_play_clip(filler_url, filler_dur, local))
     reply = await _ask_llm(http, text)
     action = reply.get("action", {})
-    await _say(reply["speech"])
+    await _say(reply["speech"], local)
     await filler
     if action.get("type") == "play_music" and action.get("query"):
         item = await _find_track(http, action["query"])
