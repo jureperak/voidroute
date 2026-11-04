@@ -111,6 +111,7 @@ async def init_fillers():
 
 
 async def _say(text, local=None):
+    print("ODGOVOR:", text, flush=True)
     CLIP_DIR.mkdir(parents=True, exist_ok=True)
     path = CLIP_DIR / f"{time.time_ns()}.wav"
     dur = await asyncio.to_thread(_synth, text, path)
