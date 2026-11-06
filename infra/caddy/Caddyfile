@@ -49,7 +49,6 @@
 	import service bazarr bazarr:6767
 	import service lidarr lidarr:8686
 	import service aurral aurral:3001
-	import service voice voice:8000
 
 	handle {
 		respond "Not found" 404

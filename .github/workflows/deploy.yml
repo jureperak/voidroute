@@ -95,17 +95,6 @@ jobs:
           umask 077
           printf 'APP_KEY=%s\n' "$SPEEDTEST_APP_KEY" > "$SERVER_BASE_PATH/speedtest/speedtest.env"
           chmod 600 "$SERVER_BASE_PATH/speedtest/speedtest.env"
-      - name: Write voice env and prepare voice folders
-        env:
-          JELLYFIN_API_KEY: ${{ secrets.JELLYFIN_API_KEY }}
-        run: |
-          set -euo pipefail
-          [ -n "$JELLYFIN_API_KEY" ] || { echo "::error::secret JELLYFIN_API_KEY is not set"; exit 1; }
-          mkdir -p "$SERVER_BASE_PATH/voice/models" "$SERVER_BASE_PATH/voice/cache" "$SERVER_BASE_PATH/ollama"
-          umask 077
-          printf 'JELLYFIN_API_KEY=%s\n' "$JELLYFIN_API_KEY" > "$SERVER_BASE_PATH/voice/voice.env"
-          chmod 600 "$SERVER_BASE_PATH/voice/voice.env"
-
       - name: Ensure docker network exists
         run: |
           docker network inspect "$DOCKER_NETWORK" >/dev/null 2>&1 || \
@@ -186,7 +175,7 @@ jobs:
         run: |
           cd infra
           docker compose --env-file "$ENV_FILE" pull --ignore-buildable
-          docker compose --env-file "$ENV_FILE" build --pull caddy voice
+          docker compose --env-file "$ENV_FILE" build --pull caddy
           docker compose --env-file "$ENV_FILE" up -d --force-recreate --remove-orphans
 
           docker image prune -f
