@@ -26,6 +26,7 @@ There is no application source code, build system, or test suite — this is pur
 | Vaultwarden | Password manager (Bitwarden-compatible server, image `vaultwarden/server:1.37.4`) | vault.* |
 | Flaresolverr | Cloudflare solver for Prowlarr | (internal only) |
 | Byparr | Cloudflare solver for Prowlarr, alternative to Flaresolverr | (internal only) |
+| Homelable | Self-hosted network and rack diagram (`ghcr.io/pouzor/homelable-*:3.6.0`, SQLite) | homelable.* |
 | Portainer | Docker management UI | portainer.* |
 | Docker socket proxy | Read-only Docker API for Homepage | (internal only) |
 | AdGuard Home | DNS/ad blocking, runs on the router (direct at 192.168.8.1:3000) | — |
@@ -72,7 +73,7 @@ Use the app's own field names: they're in each app's source (`MediaManagementCon
 
 ## Secrets and variables
 
-GitHub **secrets**: `VAULTWARDEN_ADMIN_TOKEN`, `PORKBUN_API_KEY`, `PORKBUN_API_SECRET_KEY`, `JELLYFIN_API_KEY`, `SEERR_API_KEY`, `SONARR_API_KEY`, `RADARR_API_KEY`, `PROWLARR_API_KEY`, `BAZARR_API_KEY`, `QBITTORRENT_USERNAME`, `QBITTORRENT_PASSWORD`, `LIDARR_API_KEY`, `ADGUARD_USERNAME`, `ADGUARD_PASSWORD`.
+GitHub **secrets**: `VAULTWARDEN_ADMIN_TOKEN`, `PORKBUN_API_KEY`, `PORKBUN_API_SECRET_KEY`, `JELLYFIN_API_KEY`, `SEERR_API_KEY`, `SONARR_API_KEY`, `RADARR_API_KEY`, `PROWLARR_API_KEY`, `BAZARR_API_KEY`, `QBITTORRENT_USERNAME`, `QBITTORRENT_PASSWORD`, `LIDARR_API_KEY`, `ADGUARD_USERNAME`, `ADGUARD_PASSWORD`, `HOMELABLE_SECRET_KEY`, `HOMELABLE_AUTH_PASSWORD_HASH`.
 
 The arr keys can be any 32-character hex string, generated with `openssl rand -hex 16`. The deploy writes them into each app. `SEERR_API_KEY` and `JELLYFIN_API_KEY` are created inside those apps, after their first start.
 

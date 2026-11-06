@@ -95,6 +95,23 @@ jobs:
           umask 077
           printf 'APP_KEY=%s\n' "$SPEEDTEST_APP_KEY" > "$SERVER_BASE_PATH/speedtest/speedtest.env"
           chmod 600 "$SERVER_BASE_PATH/speedtest/speedtest.env"
+      - name: Write Homelable env
+        env:
+          HOMELABLE_SECRET_KEY: ${{ secrets.HOMELABLE_SECRET_KEY }}
+          HOMELABLE_AUTH_PASSWORD_HASH: ${{ secrets.HOMELABLE_AUTH_PASSWORD_HASH }}
+        run: |
+          set -euo pipefail
+          [ -n "$HOMELABLE_SECRET_KEY" ] || { echo "::error::secret HOMELABLE_SECRET_KEY is not set"; exit 1; }
+          [ -n "$HOMELABLE_AUTH_PASSWORD_HASH" ] || { echo "::error::secret HOMELABLE_AUTH_PASSWORD_HASH is not set"; exit 1; }
+          mkdir -p "$SERVER_BASE_PATH/homelable/data"
+          umask 077
+          env_file="$SERVER_BASE_PATH/homelable/homelable.env"
+          printf '%s\n' "SECRET_KEY=$HOMELABLE_SECRET_KEY" > "$env_file"
+          printf '%s\n' "AUTH_USERNAME=admin" >> "$env_file"
+          printf '%s\n' "AUTH_PASSWORD_HASH='$HOMELABLE_AUTH_PASSWORD_HASH'" >> "$env_file"
+          printf '%s\n' 'SCANNER_RANGES=["192.168.8.0/24"]' >> "$env_file"
+          chmod 600 "$env_file"
+
       - name: Ensure docker network exists
         run: |
           docker network inspect "$DOCKER_NETWORK" >/dev/null 2>&1 || \
