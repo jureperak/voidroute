@@ -129,34 +129,6 @@ services:
     networks:
       - voidroute
 
-  # Homelab diagram tool (https://homelable.net). Service names backend/frontend are required:
-  # the frontend image's nginx proxies /api to http://backend:8000.
-  backend:
-    image: ghcr.io/pouzor/homelable-backend:3.6.0
-    container_name: homelable-backend
-    restart: unless-stopped
-    env_file:
-      - ${SERVER_BASE_PATH}/homelable/homelable.env   # SECRET_KEY, login, scanner ranges (written by the deploy)
-    environment:
-      - SQLITE_PATH=/app/data/homelab.db
-      - 'CORS_ORIGINS=["https://homelable.${SERVER_NAME}"]'
-    volumes:
-      - ${SERVER_BASE_PATH}/homelable/data:/app/data
-    cap_add:
-      - NET_RAW   # nmap scanning
-    networks:
-      - homelable
-
-  frontend:
-    image: ghcr.io/pouzor/homelable-frontend:3.6.0
-    container_name: homelable-frontend
-    restart: unless-stopped
-    depends_on:
-      - backend
-    networks:
-      - homelable
-      - voidroute
-
   portainer:
     image: portainer/portainer-ce:lts
     container_name: portainer
@@ -321,8 +293,6 @@ networks:
   voidroute:
     external: true
     name: ${DOCKER_NETWORK}
-  homelable:
-    driver: bridge
   homepage-mgmt:
     internal: true
     ipam:
